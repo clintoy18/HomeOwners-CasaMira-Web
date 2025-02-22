@@ -7,22 +7,22 @@
 	Layout = "/Views/Shared/_AccountLayout.cshtml";
 
 }
-
 <div class="account-container">
-
+	<div class="layout">
+		<h1 class="fs-3">CASA MIRA</h1>
+		<p class="fs-5 text-center">Home Owner</p>
+	</div>
+	
 	<div class="account-box">
-		<h2>CasaMira HomeOwners</h2>
-		<p>Sign in to your account</p>
+		<h2 class="text-center pb-2">LOGIN</h2>
 		<form asp-action="Login" method="post">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<div class="mb-3">
-				<label for="Email" class="form-label">Email</label>
-				<input asp-for-"Email" type="email" class="form-control" placeholder="Email">
+				<input asp-for-"Email" type="email" class="form-control border" placeholder="Enter your email">
 				<span asp-validation-for="Email" class="text-danger"></span>
 			</div>
 			<div class="mb-3">
-				<label for="Password" class="form-label">Password</label>
-				<input asp-for-"Password" type="Password" class="form-control" placeholder="Password">
+				<input asp-for-"Password" type="Password" class="form-control" placeholder="Enter your password">
 				<span asp-validation-for="Password" class="text-danger"></span>
 			</div>
 			<div class="float-end">
@@ -36,8 +36,8 @@
 				</label>
 			</div>
 			<input type="submit" value="Login" class="btn btn-primary btn-primary w-100 p-2"/>
-			<p class="text-center mt-2">Dont have an account?
-				<a asp-controller="Account" asp-action="Register" class="text-decoration-none mt-3">Register</a>
+			<p class="ml-1 mt-2">Dont have an account?
+				<a asp-controller="Account" asp-action="Register" class="text-decoration-none mt-3">Sign up</a>
 			</p>
 			<div class="text-center" >
 				<a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Back</a>
