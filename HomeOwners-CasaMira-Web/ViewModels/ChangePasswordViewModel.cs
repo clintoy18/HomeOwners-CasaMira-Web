@@ -14,7 +14,7 @@ namespace HomeOwners_CasaMira_Web.ViewModels
         [StringLength(40, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
         [DataType(DataType.Password)]
         [Display(Name = " New Password")]
-        [Compare("ConfirmNewPassword", ErrorMessage = "Password does not match")]
+        [Compare("Confirm New Password", ErrorMessage = "Password does not match")]
         public string NewPassword { get; set; }
 
 
