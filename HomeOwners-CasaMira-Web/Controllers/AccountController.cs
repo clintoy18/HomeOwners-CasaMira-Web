@@ -107,9 +107,13 @@ namespace HomeOwners_CasaMira_Web.Controllers
         {
             return View();
         }
-        public IActionResult ChangePassword()
+        public IActionResult ChangePassword(string username)
         {
-            return View();
+            if (string.IsNullOrEmpty(username)) {
+                return RedirectToAction("VerifyEmail", "Account");
+        
+            }
+            return View(new ChangePasswordViewModel{ Email = username });
         }
     }
 }
