@@ -27,21 +27,45 @@ namespace HomeOwners_CasaMira_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-             
+                // Check if the user exists
+                var user = await userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "User not found.");
+                    return View(model);
+                }
+
+                // Verify the password directly
+                bool passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
+                if (!passwordValid)
+                {
+                    ModelState.AddModelError("", "Invalid password.");
+                    return View(model);
+                }
+
+                // Use the username (which should be set to the email) for sign-in
+                var result = await signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "Home");
                 }
+                else if (result.IsLockedOut)
+                {
+                    ModelState.AddModelError("", "User account locked out.");
+                }
+                else if (result.IsNotAllowed)
+                {
+                    ModelState.AddModelError("", "User is not allowed to sign in.");
+                }
                 else
                 {
                     ModelState.AddModelError("", "Email or password is incorrect");
-                    return View(model);
                 }
             }
             return View(model);
         }
+
         public IActionResult Register()
         {
             return View();
