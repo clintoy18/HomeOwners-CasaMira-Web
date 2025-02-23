@@ -28,6 +28,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
             if (ModelState.IsValid)
             {
                 var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+             
 
                 if (result.Succeeded)
                 {
@@ -35,7 +36,8 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                    ModelState.AddModelError("", "Email or password is incorrect");
+                    return View(model);
                 }
             }
             return View(model);
@@ -50,7 +52,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                Users users = new Users
+                Users user = new Users
                 { 
 
                     FullName = model.Name,
@@ -58,7 +60,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                     UserName = model.Email,
                 };
 
-                var result = await userManager.CreateAsync(users, model.Password);
+                var result = await userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
