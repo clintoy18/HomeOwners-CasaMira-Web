@@ -8,7 +8,7 @@ namespace HomeOwners_CasaMira_Web.ViewModels
     public string Name { get; set; }
 
     [Required(ErrorMessage = "Name is required.")]
-    [EmailAddress]
+   [EmailAddress]
     public string Email { get; set; }
 
 
