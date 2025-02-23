@@ -2,6 +2,7 @@
 
 
 .account-container {
+    font-family: sans-serif;
     background-image: url('../css/images/bg.png');
     background-size: cover;
     background-position: center;    
@@ -26,11 +27,15 @@
 }
 
 .layout {
+    font-family: sans-serif;
     position: absolute;
     top: 20px;
     left: 20px;
     color: white;
 }
 
+.login-button{
+    text-align: right;
+}
 
 
