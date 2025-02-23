@@ -13,10 +13,20 @@ html {
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 60px;
+    font-family: 'Poppins', sans-serif;
+    background-image: url('../css/images/bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat-y;
+    -ms-align-content: inherit;
+    -webkit-align-content: inherit;
+    min-height: 100vh;
 }
