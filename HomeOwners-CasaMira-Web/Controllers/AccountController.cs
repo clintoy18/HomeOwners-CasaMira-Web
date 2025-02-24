@@ -115,5 +115,12 @@ namespace HomeOwners_CasaMira_Web.Controllers
             }
             return View(new ChangePasswordViewModel{ Email = username });
         }
+
+        public async Task<IActionResult> Logout()
+
+        { 
+          await signInManager.SignOutAsync();
+          return RedirectToAction("Index", "Home");
+        }
     }
 }
