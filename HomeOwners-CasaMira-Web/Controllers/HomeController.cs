@@ -23,6 +23,29 @@ namespace HomeOwners_CasaMira_Web.Controllers
         {
             return View();
         }
+        [Authorize]
+        public IActionResult Announcement()
+        {
+            return View();
+        }
+        [Authorize]
+        public IActionResult Ameneties()
+
+        {
+            return View();
+        }
+        [Authorize]
+        public IActionResult Communications()
+
+        {
+            return View();
+        }
+        [Authorize]
+        public IActionResult OurCommunity()
+
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -30,5 +53,6 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+      
     }
 }

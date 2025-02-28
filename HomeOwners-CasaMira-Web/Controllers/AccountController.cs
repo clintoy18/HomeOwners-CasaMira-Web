@@ -122,5 +122,8 @@ namespace HomeOwners_CasaMira_Web.Controllers
           await signInManager.SignOutAsync();
           return RedirectToAction("Index", "Home");
         }
+   
+       
+
     }
 }

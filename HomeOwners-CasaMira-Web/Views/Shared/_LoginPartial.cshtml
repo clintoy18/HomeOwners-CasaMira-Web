@@ -5,19 +5,28 @@
 	@if (SignInManager.IsSignedIn(User))
 	{
 		<li class="nav-item">
-			<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+			<a class="nav-link  text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+			<a class="nav-link  text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link  text-white" asp-area="" asp-controller="Home" asp-action="Announcement">Announcement</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link  text-white" asp-area="" asp-controller="Home" asp-action="Ameneties">Ameneties</a>
 		</li>
 		<li class="nav-item end-0">
-			<a class="nav-link" asp-controller="Account" asp-action ="Logout">Logout</a>
+			<a class="nav-link  text-white" asp-controller="Account" asp-action="Logout">Logout</a>
 		</li>
 	}
 	else
 	{
 		<li class="nav-item end-0">
-			<a class="nav-link btn btn-primary btn-primary p-2 text-white" asp-controller="Account" asp-action="Login">LOGIN</a>
-		</li>		
+			<a class="nav-link nav-link  text-white" asp-controller="Account" asp-action="Login">Login</a>
+		</li>
+		<li class="nav-item end-0">
+			<a class="nav-link nav-link  text-white" asp-controller="Account" asp-action="Register">Register</a>
+		</li>
 	}
 	</ul>
