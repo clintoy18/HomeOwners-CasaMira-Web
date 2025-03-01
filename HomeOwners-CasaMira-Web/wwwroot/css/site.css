@@ -30,3 +30,12 @@ body {
     -webkit-align-content: inherit;
     min-height: 100vh;
 }
+
+.layout {
+    font-family: 'Poppins', sans-serif;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+}
+

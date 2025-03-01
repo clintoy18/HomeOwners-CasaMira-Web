@@ -6,11 +6,9 @@ namespace HomeOwners_CasaMira_Web.Data
 {
     public class AppDbContext : IdentityDbContext<Users>
     {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options){ }
 
-        public AppDbContext(DbContextOptions options) : base(options)
-        {
-        }
-
+        //Announcements Table
+        public DbSet<Announcement> Announcements { get; set; }
     }
-
 }

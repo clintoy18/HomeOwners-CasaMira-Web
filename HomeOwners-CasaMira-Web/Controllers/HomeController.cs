@@ -23,11 +23,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
         {
             return View();
         }
-        [Authorize]
-        public IActionResult Announcement()
-        {
-            return View();
-        }
+   
         [Authorize]
         public IActionResult Ameneties()
 
