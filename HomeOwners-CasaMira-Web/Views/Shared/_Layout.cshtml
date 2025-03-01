@@ -8,6 +8,14 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/account.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        html{
+            height: 100%;
+        }
+        .container{
+            height: 100vh;
+        }
+    </style>
 </head>
 <body class="d-flex flex-column">
    
@@ -37,6 +45,26 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+    </div>
+    <div class="cont w-full h-75" style="background: linear-gradient(to right, #B6A28E, #ffff); ">
+        <<div class="container text-center">
+            <div class="row d-flex justify-content-center">
+                <div class="col">
+                    <div class="row pb-5" style="padding-top: 100px;">
+                        <img class="w-75" src="../css/images/casamira2.png" />
+                    </div>
+                    <div class="row">
+                        <img class="w-75" src="../css/images/casamira.jpg" />
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row" style="padding-top: 260px;">
+                        <h1 style="font-size: 3rem;" class="pb-3 text-primary">Welcome to Casamira</h1>
+                        <p style="font-size: 1.3rem;">Our goal is to provide affordable housing for every Filipino. Alongside this, we continuously develop and explore programs and innovations that best serve our buyers and homeowners. (NOT FINAL DESIGN)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
