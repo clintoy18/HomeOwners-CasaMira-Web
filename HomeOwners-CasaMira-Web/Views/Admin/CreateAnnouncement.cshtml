@@ -4,7 +4,12 @@
 
 @model HomeOwners_CasaMira_Web.Models.Announcement
 
-<h2>Create Announcement</h2>
+<h2 class="text-white">Create Announcement</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+{
+    <div class="alert alert-success">@ViewBag.SuccessMessage</div>
+}
 
 <form asp-action="CreateAnnouncement" asp-controller="Admin" method="post">
     <div class="form-group">
