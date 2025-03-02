@@ -12,7 +12,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
         public AdminController(AppDbContext context)
         {
-            _context = context; // Inject the database context
+            _context = context;
         }
         public IActionResult Dashboard()
         {
@@ -36,7 +36,8 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 await _context.SaveChangesAsync();
 
                 ViewBag.Message = "Announcement created successfully!";
-                return View();
+                ModelState.Clear(); 
+                return View(new Announcement()); 
 
             }
 
