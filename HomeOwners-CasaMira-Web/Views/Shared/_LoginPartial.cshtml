@@ -1,35 +1,51 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @inject SignInManager<Users> SignInManager;
+@inject UserManager<Users> UserManager;
 
-	<ul class="navbar-nav start">
-	@if (SignInManager.IsSignedIn(User))
-	{
-		
-		
-		<li class="nav-item">
-			<a class="nav-link  text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link  text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-		</li>
-		<li class="nav-item">
-			<a class ="nav-link  text-white" asp-controller="Announcement" asp-action="Announcement">View Announcements</a>
-
-		</li>
-		<li class="nav-item">
-			<a class="nav-link  text-white" asp-area="" asp-controller="Home" asp-action="Ameneties">Ameneties</a>
-		</li>
-		<li class="nav-item end-0">
-			<a class="nav-link  text-white" asp-controller="Account" asp-action="Logout">Logout</a>
-		</li>
-	}
-	else
-	{
-		<li class="nav-item end-0">
-			<a class="nav-link text-white" asp-controller="Account" asp-action="Login">Login</a>
-		</li>
-		<li class="nav-item end-0">
-			<a class="nav-link text-white" asp-controller="Account" asp-action="Register">Register</a>
-		</li>
-	}
-	</ul>
+<ul class="navbar-nav start">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        if (User.IsInRole("Admin"))
+        {
+            <!-- Admin Navigation -->
+            <li class="nav-item">
+                <a class="nav-link text-white" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" asp-controller="Admin" asp-action="CreateAnnouncement">Create Announcements</a>
+            </li>
+            <li class="nav-item end-0">
+                <a class="nav-link text-white" asp-controller="Account" asp-action="Logout">Logout</a>
+            </li>
+        }
+        else
+        {
+            <!-- Regular User Navigation -->
+            <li class="nav-item">
+                <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" asp-controller="Announcement" asp-action="Announcement">View Announcements</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" asp-controller="Home" asp-action="Ameneties">Amenities</a>
+            </li>
+            <li class="nav-item end-0">
+                <a class="nav-link text-white" asp-controller="Account" asp-action="Logout">Logout</a>
+            </li>
+        }
+    }
+    else
+    {
+        <!-- Guest Navigation -->
+        <li class="nav-item end-0">
+            <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Login</a>
+        </li>
+        <li class="nav-item end-0">
+            <a class="nav-link text-white" asp-controller="Account" asp-action="Register">Register</a>
+        </li>
+    }
+</ul>

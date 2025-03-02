@@ -35,7 +35,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                     return View(model);
                 }
 
-                // Verify the password directly
+                // Verify the password
                 bool passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
                 if (!passwordValid)
                 {
@@ -43,12 +43,18 @@ namespace HomeOwners_CasaMira_Web.Controllers
                     return View(model);
                 }
 
-                // Use the username (which should be set to the email) for sign-in
+                // Sign in the user
                 var result = await signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    // 🔹 Check if user is an Admin
+                    if (await userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        return RedirectToAction("Dashboard", "Admin"); // Redirect to Admin Panel
+                    }
+
+                    return RedirectToAction("Index", "Home"); // Normal users go to Home
                 }
                 else if (result.IsLockedOut)
                 {
@@ -65,6 +71,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
             }
             return View(model);
         }
+
 
         public IActionResult Register()
         {
