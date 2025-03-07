@@ -1,5 +1,84 @@
 ﻿@{
     ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout"; // Uses Admin Layout
 }
-<h2>Welcome to the Admin Dashboard</h2>
-<p>You are logged in as an Admin.</p>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">📊 Admin Dashboard</h2>
+
+    <div class="row">
+        <!-- Left Column: Announcement Form -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h4 class="mb-3">📢 Post Announcement</h4>
+
+                <form id="announcementForm">
+                    <div class="mb-3">
+                        <label class="form-label">Announcement Title</label>
+                        <input type="text" class="form-control" id="announcementTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" id="announcementCategory">
+                            <option value="General">General</option>
+                            <option value="Event">Event</option>
+                            <option value="Update">Update</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Content</label>
+                        <textarea class="form-control" id="announcementContent" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">📌 Post Announcement</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column: Pie Chart -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h4 class="mb-3">📊 Announcement Statistics</h4>
+                <div style="height: 350px;">
+                    <canvas id="announcementChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const announcementData = {
+            General: 5,
+            Event: 3,
+            Update: 2
+        };
+
+        const ctx = document.getElementById("announcementChart").getContext("2d");
+        new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: Object.keys(announcementData),
+                datasets: [{
+                    data: Object.values(announcementData),
+                    backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "bottom" // Keeps labels visible
+                    }
+                }
+            }
+        });
+
+        document.getElementById("announcementForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            alert("📢 Announcement Posted! (Database functionality not implemented yet)");
+        });
+    });
+</script>

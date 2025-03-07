@@ -1,3 +1,15 @@
-﻿@{
-    Layout = "_Layout";
+﻿@inject Microsoft.AspNetCore.Identity.UserManager<HomeOwners_CasaMira_Web.Models.Users> UserManager
+@inject Microsoft.AspNetCore.Identity.SignInManager<HomeOwners_CasaMira_Web.Models.Users> SignInManager
+
+@{
+    Layout = "_Layout"; // Default layout for regular users
+
+    if (SignInManager.IsSignedIn(User))
+    {
+        var currentUser = await UserManager.GetUserAsync(User);
+        if (currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin"))
+        {
+            Layout = "_AdminLayout"; // Use the Admin layout for Admin users
+        }
+    }
 }
