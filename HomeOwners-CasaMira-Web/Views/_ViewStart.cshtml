@@ -2,14 +2,22 @@
 @inject Microsoft.AspNetCore.Identity.SignInManager<HomeOwners_CasaMira_Web.Models.Users> SignInManager
 
 @{
-    Layout = "_Layout"; // Default layout for regular users
+    Layout = "_Layout"; // Default layout for guests
 
     if (SignInManager.IsSignedIn(User))
     {
         var currentUser = await UserManager.GetUserAsync(User);
-        if (currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin"))
+
+        if (currentUser != null)
         {
-            Layout = "_AdminLayout"; // Use the Admin layout for Admin users
+            if (await UserManager.IsInRoleAsync(currentUser, "Admin"))
+            {
+                Layout = "_AdminLayout"; // Use the Admin layout for Admins
+            }
+            else
+            {
+                Layout = "_UserLayout"; // Use User layout for regular logged-in users
+            }
         }
     }
 }

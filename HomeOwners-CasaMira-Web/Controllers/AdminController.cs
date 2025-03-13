@@ -2,10 +2,12 @@
 using HomeOwners_CasaMira_Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace HomeOwners_CasaMira_Web.Controllers
 {
-    [Authorize(Roles = "Admin")] // Restrict access to Admins only
+    [Authorize(Roles = "Admin")] // Only admins can access
     public class AdminController : Controller
     {
         private readonly AppDbContext _context;
@@ -14,15 +16,12 @@ namespace HomeOwners_CasaMira_Web.Controllers
         {
             _context = context;
         }
+
         public IActionResult Dashboard()
         {
             return View();
         }
 
-        public IActionResult CreateAnnouncement() 
-        {
-            return View();
-        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateAnnouncement(Announcement model)
@@ -35,13 +34,11 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 _context.Announcements.Add(model);
                 await _context.SaveChangesAsync();
 
-                ViewBag.Message = "Announcement created successfully!";
-                ModelState.Clear(); 
-                return View(new Announcement()); 
-
+                TempData["SuccessMessage"] = "📢 Announcement posted successfully!";
+                return RedirectToAction("Dashboard"); // Redirects after posting
             }
 
-            return View(model);
+            return View("Dashboard", model);
         }
     }
 }

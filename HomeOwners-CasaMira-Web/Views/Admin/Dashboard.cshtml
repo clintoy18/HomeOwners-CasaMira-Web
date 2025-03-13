@@ -6,28 +6,27 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4">📊 Admin Dashboard</h2>
 
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
     <div class="row">
         <!-- Left Column: Announcement Form -->
         <div class="col-md-6">
             <div class="card shadow-sm p-4">
                 <h4 class="mb-3">📢 Post Announcement</h4>
 
-                <form id="announcementForm">
+                <form asp-controller="Admin" asp-action="CreateAnnouncement" method="post">
+                    @Html.AntiForgeryToken()
+
                     <div class="mb-3">
                         <label class="form-label">Announcement Title</label>
-                        <input type="text" class="form-control" id="announcementTitle" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Category</label>
-                        <select class="form-control" id="announcementCategory">
-                            <option value="General">General</option>
-                            <option value="Event">Event</option>
-                            <option value="Update">Update</option>
-                        </select>
+                        <input type="text" class="form-control" name="Title" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Content</label>
-                        <textarea class="form-control" id="announcementContent" rows="3" required></textarea>
+                        <textarea class="form-control" name="Content" rows="3" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">📌 Post Announcement</button>
                 </form>
@@ -70,15 +69,10 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: "bottom" // Keeps labels visible
+                        position: "bottom"
                     }
                 }
             }
-        });
-
-        document.getElementById("announcementForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-            alert("📢 Announcement Posted! (Database functionality not implemented yet)");
         });
     });
 </script>
