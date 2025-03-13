@@ -1,71 +1,43 @@
-﻿<!DOCTYPE html>
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - HomeOwners_CasaMira_Web</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/account.css" asp-append-version="true" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <style>
-        html{
-            height: 100%;
-        }
-        .container{
-            height: 100vh;
-        }
-        .cont{
-            height: 65vh;
-        }
-        .footer{
-            height: 35vh;
-            padding: 70px;
-        }
-
-        .name {
-            font-family: 'Poppins', sans-serif;
-            padding-left: 20px;
-            color: white;
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - User Panel</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/user.css" asp-append-version="true">
 </head>
-<body class="d-flex flex-column">
-   
-    <div>
-        <header class="position-absolute top-0 end-0 m-3">
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3 ">
-                <div class="container-fluid">
-                    @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HomeOwners_CasaMira_Web</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>*@
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+<body class="user-layout">
+    <div class="d-flex">
+        <!-- Include Sidebar Partial -->
+        @await Html.PartialAsync("_LoginPartial")
 
-                     
-
-                        <ul class="navbar-nav flex-grow-1">
-                         
-						    <partial name="_LoginPartial" />
-                        </ul>
-                    </div>
+        <!-- Main Content -->
+        <div class="content flex-grow-1">
+            <nav class="navbar navbar-expand-lg navbar-trans  px-4" style="background-color: transparent;">
+                <!-- Navbar content here -->
+         
+                
+                <div class="ms-auto">
+                    <a class="btn text-white" asp-controller="Profile" asp-action="Edit">
+                        <i class="bi bi-person"></i> Profile
+                    </a>
+                    <a class="btn text-white" asp-controller="Account" asp-action="Logout">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
                 </div>
             </nav>
-        </header>
-    </div>
-    <div class="container d-flex justify-content-center align-items-center flex-grow-1 mt-3 ">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
- 
-   
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <scrip src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></scrip   t>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+            <div class="p-4">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

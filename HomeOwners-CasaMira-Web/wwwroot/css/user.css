@@ -1,0 +1,16 @@
+﻿/* Background image for UserLayout */
+.user-layout {
+    background: url('../css/images/bg.png') no-repeat center center fixed; background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar {
+    background-color: #947860;
+    color: white; /* Ensures text is readable */
+    height: 100vh; /* Full height */
+    width: 250px; /* Adjust width as needed */
+    top: 0;
+    left: 0;
+    padding: 20px;
+}
