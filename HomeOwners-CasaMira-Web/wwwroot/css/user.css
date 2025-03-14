@@ -14,3 +14,11 @@
     left: 0;
     padding: 20px;
 }
+
+.user-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover; /* Ensures the image fills the circle */
+    border-radius: 50%; /* Makes it perfectly circular */
+    border: 2px solid #fff; /* Optional: Adds a white border */
+}

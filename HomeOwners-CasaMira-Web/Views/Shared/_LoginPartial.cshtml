@@ -4,12 +4,14 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <nav class="sidebar text-white vh-100 p-3" style="background-color: #947860;">
-        <h3 class="text-center">Navigation</h3>
+    <nav class="sidebar text-white vh-100 p-2 pt-5" style="background-color: #947860;">
+        <h1 class="text-center">CASA MIRA</h1>
+        <h5 class="text-center">HomeOwners</h5>
         <ul class="nav flex-column">
             @if (User.IsInRole("Admin"))
             {
                 <!-- Admin Navigation -->
+                <h3 class="text-center">Hello, Admin!</h3>
                 <li class="nav-item">
                     <a class="nav-link text-white" asp-controller="Admin" asp-action="Dashboard">
                         <i class="bi bi-speedometer2"></i> Admin Dashboard
@@ -23,6 +25,11 @@
             }
             else
             {
+                <div class="text-center pt-3 ">
+                    <img src="~/css/images/bg.png" alt="User Image" class="user-image">
+                    <p class="text-center pt-3">Hello, Harold! </p>
+                </div>
+
                 <!-- Regular User Navigation -->
                 <li class="nav-item">
                     <a class="nav-link text-white" asp-controller="Home" asp-action="Index">
@@ -31,12 +38,27 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" asp-controller="Announcement" asp-action="Announcement">
-                        <i class="bi bi-megaphone"></i> View Announcements
+                        <i class="bi bi-megaphone"></i>  Announcements
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" asp-controller="Home" asp-action="Ameneties">
                         <i class="bi bi-building"></i> Amenities
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-controller="Home" asp-action="Ameneties">
+                        <i class="bi bi-building"></i>Online Payments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-controller="Home" asp-action="OurCommunity">
+                        <i class="bi bi-building"></i>Our Community
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-controller="Home" asp-action="Communications">
+                        <i class="bi bi-building"></i>Rules and Regulations
                     </a>
                 </li>
                 <li class="nav-item">
@@ -59,10 +81,10 @@ else
     <!-- Guest Navigation (If Not Logged In) -->
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+            <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Login</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+            <a class="nav-link text-white" asp-controller="Account" asp-action="Register">Register</a>
         </li>
     </ul>
 }
