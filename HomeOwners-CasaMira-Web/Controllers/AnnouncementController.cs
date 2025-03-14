@@ -34,5 +34,16 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
             return View("Announcement", announcements); // Render "Announcement.cshtml" with data
         }
+
+        public IActionResult Details(int id)
+        {
+            var announcement = _context.Announcements?.FirstOrDefault(a => a.Id == id);
+            if (announcement == null)
+            {
+                return NotFound();
+            }
+            return PartialView("_AnnouncementDetails", announcement); // Load details in a partial view
+        }
+
     }
 }
