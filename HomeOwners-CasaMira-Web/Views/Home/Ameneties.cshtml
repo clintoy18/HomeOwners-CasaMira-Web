@@ -1,39 +1,34 @@
 ﻿@{
     ViewData["Title"] = "Amenities Page";
 }
-    <!-- Main Content -->
-    <div  style="top: 61px;">
-        <h1 class="fw-bold text-uppercase text-center text-white" style="font-size: 32px; letter-spacing: 0.15em;">Amenities</h1>
+<!-- Main Content -->
+<div class="container mt-5">
+    <!-- Title -->
+    <div class="text-center pb-5">
+        <h1 class="fw-bold text-uppercase text-white"
+            style="font-size: 32px; letter-spacing: 0.15em; margin-bottom: 60px;">
+            Amenities
+        </h1>
     </div>
 
     <!-- Amenities Grid -->
-    <div class="position-absolute" style="left: 368px; top: 158px; width: 958px; height: 540px; background: rgba(255, 255, 255, 0.3); border-radius: 8px;">
-
-        <div class="d-flex flex-wrap justify-content-center mt-4">
-            <div class="m-3 text-center">
-                <div class="rounded" style="width: 254px; height: 181px; background: #D9D9D9;"></div>
-                <p class="mt-2 text-black fs-5">Pool</p>
-            </div>
-            <div class="m-3 text-center">
-                <div class="rounded" style="width: 254px; height: 181px; background: #D9D9D9;"></div>
-                <p class="mt-2 text-black fs-5">Gym</p>
-            </div>
-            <div class="m-3 text-center">
-                <div class="rounded" style="width: 254px; height: 181px; background: #D9D9D9;"></div>
-                <p class="mt-2 text-black fs-5">Lounge</p>
-            </div>
-            <div class="m-3 text-center">
-                <div class="rounded" style="width: 254px; height: 181px; background: #D9D9D9;"></div>
-                <p class="mt-2 text-black fs-5">Playground</p>
-            </div>
-            <div class="m-3 text-center">
-                <div class="rounded" style="width: 254px; height: 181px; background: #D9D9D9;"></div>
-                <p class="mt-2 text-black fs-5">Garden</p>
-            </div>
-            <div class="m-3 text-center">
-                <div class="rounded" style="width: 254px; height: 181px; background: #D9D9D9;"></div>
-                <p class="mt-2 text-black fs-5">Parking Area</p>
-            </div>
+    <div class="container">
+        <div class="row g-5 justify-content-center">
+            @foreach (var amenity in new[] { "Pool", "Gym", "Spa", "Lounge", "Cafe", "Garden" })
+            {
+                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                    <div class="text-center position-relative" style="width: 250px; margin-bottom: 30px;">
+                        <img src="~/css/images/casamira.jpg"
+                             class="rounded-circle position-absolute start-50 translate-middle"
+                             style="top: -15px; width: 120px; height: 120px; object-fit: cover; border: 4px solid white; z-index: 10;">
+                        <div class="rounded d-flex flex-column align-items-center justify-content-center position-relative"
+                             style="width: 250px; height: 180px; background: rgba(255, 255, 255, 0.85);
+                            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); padding-top: 70px; z-index: 1;">
+                            <p class="text-black fs-5 mb-0">@amenity</p>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-   
-
+    </div>
+</div>

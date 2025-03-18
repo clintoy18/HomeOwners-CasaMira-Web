@@ -1,24 +1,179 @@
 ﻿/* Background image for UserLayout */
 .user-layout {
-    background: url('../css/images/bg.png') no-repeat center center fixed; background-size: cover;
+    background: url('../css/images/bg.png') no-repeat center center fixed;
+    background-size: cover;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
+
+/* Default Sidebar Style */
 .sidebar {
-    background-color: #947860;
-    color: white; /* Ensures text is readable */
-    height: 100vh; /* Full height */
-    width: 250px; /* Adjust width as needed */
-    top: 0;
-    left: 0;
-    padding: 20px;
+    background-color: rgba(148, 120, 96, 0.9); /* Semi-transparent for better visibility */
+    width: 250px;
+    transition: all 0.3s ease-in-out;
+    z-index: 1000;
+    position: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
 }
 
+/* Sidebar Header */
+.sidebar-header {
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+    .sidebar-header h1, .sidebar-header h5 {
+        margin: 0;
+        color: white;
+    }
+
+/* Sidebar Navigation */
+.nav {
+    flex-grow: 1;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.nav-item {
+    width: 100%;
+}
+
+.nav-link {
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: background 0.3s;
+    border-radius: 5px;
+}
+
+    .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-link i {
+        font-size: 1.4rem;
+    }
+
+.sidebar-text {
+    margin-left: 12px;
+    font-size: 1rem;
+}
+
+/* Responsive Sidebar */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .content {
+        margin-left: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80px;
+    }
+
+    .sidebar-text {
+        display: none;
+    }
+
+    .content {
+        margin-left: 80px;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 0;
+        overflow: hidden;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+}
+
+/* Adjust Content to Sidebar */
+.content {
+    margin-left: 200px;
+    transition: margin-left 0.3s ease-in-out;
+    padding: 20px;
+}
+/* Content Wrapper */
+.content {
+    flex: 1;
+    margin-left: 200px; /* Default when sidebar is visible */
+    transition: margin-left 0.3s ease-in-out;
+    padding: 20px;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .content {
+        margin-left: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .content {
+        margin-left: 80px;
+    }
+}
+
+@media (max-width: 576px) {
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* Ensure Sidebar and Content are within a Flex Container */
+.user-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.sidebar {
+    flex-shrink: 0;
+}
+
+
+/* User Image */
 .user-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover; /* Ensures the image fills the circle */
-    border-radius: 50%; /* Makes it perfectly circular */
-    border: 2px solid #fff; /* Optional: Adds a white border */
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Toggle Button for Small Screens */
+.toggle-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 1.5rem;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+}
+
+@media (max-width: 576px) {
+    .toggle-btn {
+        display: block;
+    }
 }
