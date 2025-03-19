@@ -16,7 +16,7 @@ namespace HomeOwners_CasaMira_Web.Models
         public Users User { get; set; }
 
         [Required]
-        public int FacilityId { get; set; }
+        public int FacilityId { get; set; } // Ensure this column exists
 
         [ForeignKey("FacilityId")]
         public Facility Facility { get; set; }
@@ -25,11 +25,10 @@ namespace HomeOwners_CasaMira_Web.Models
         public DateTime ReservationDate { get; set; }
 
         [Required]
-        public TimeSpan StartTime { get; set; }
-
+        public TimeSpan StartTime { get; set; } // Ensure these columns exist
         [Required]
         public TimeSpan EndTime { get; set; }
 
-        public string Status { get; set; } = "Pending"; // Default status
+        public string Status { get; set; } = "Pending"; // Ensure this column exists
     }
 }

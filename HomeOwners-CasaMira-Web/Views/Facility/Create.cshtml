@@ -1,0 +1,41 @@
+﻿@model HomeOwners_CasaMira_Web.Models.Facility
+
+@{
+    ViewData["Title"] = "Create Facility";
+}
+
+<h1>Create a New Facility</h1>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IsAvailable" class="control-label"></label>
+        <input type="checkbox" asp-for="IsAvailable" />
+        <span asp-validation-for="IsAvailable" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImageUrl" class="control-label"></label>
+        <input type="text" asp-for="ImageUrl" class="form-control" placeholder="Enter image URL" />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

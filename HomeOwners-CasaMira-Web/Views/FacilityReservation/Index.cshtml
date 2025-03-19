@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Amenities Page";
+}
+
+<!-- Main Content -->
+<div class="container mt-5">
+    <!-- Title -->
+    <div class="text-center pb-5">
+        <h1 class="fw-bold text-uppercase text-white"
+            style="font-size: 32px; letter-spacing: 0.15em; margin-bottom: 60px;">
+            Amenities
+        </h1>
+    </div>
+
+    <!-- Amenities Grid -->
+    <div class="row g-5 justify-content-center">
+        @* Create a list of amenities with their corresponding images *@
+        @foreach (var amenity in new[] {
+        new { Name = "Pool", Image = Url.Content("~/css/images/swimmingpool.png") },
+        new { Name = "Gym", Image = Url.Content("~/css/images/fitness.png") },
+        new { Name = "Playgrounds", Image = Url.Content("~/css/images/playgrounds.png") },
+        new { Name = "Environmental Friendly", Image = Url.Content("~/css/images/nature.png") },
+        new { Name = "Basketball Courts", Image = Url.Content("~/css/images/sports.png") },
+        new { Name = "Community Center", Image = Url.Content("~/css/images/communitycenter.png") }
+        })
+        {
+            <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                <div class="text-center position-relative" style="width: 250px; margin-bottom: 30px;">
+                    <img src="@amenity.Image"
+                         class="rounded-circle position-absolute start-50 translate-middle"
+                         style="top: -15px; width: 120px; height: 120px; object-fit: cover; border: 4px solid white; z-index: 10;">
+                    <div class="rounded d-flex flex-column align-items-center justify-content-center position-relative"
+                         style="width: 250px; height: 180px; background: rgba(255, 255, 255, 0.85);
+                        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); padding-top: 70px; z-index: 1;">
+                        <p class="text-black fs-5 mb-0">@amenity.Name</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
