@@ -79,37 +79,42 @@ namespace HomeOwners_CasaMira_Web.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
                 Users user = new Users
-                { 
-
+                {
                     FullName = model.Name,
                     Email = model.Email,
                     UserName = model.Email,
+                    Address = model.Address,
+                    DateOfBirth = model.DateOfBirth,
+                    Role = model.Role // 👈 Save the Role
                 };
 
                 var result = await userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
+                    // Assign the selected role to the user
+                    await userManager.AddToRoleAsync(user, model.Role);
+
                     return RedirectToAction("Login", "Account");
                 }
                 else
                 {
                     foreach (var error in result.Errors)
-                    { 
-                        ModelState.AddModelError("", error.Description);    
-
+                    {
+                        ModelState.AddModelError("", error.Description);
                     }
                     return View(model);
                 }
-
             }
             return View(model);
         }
+
         public IActionResult VerifyEmail()
         {
             return View();
