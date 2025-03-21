@@ -8,7 +8,6 @@ namespace HomeOwners_CasaMira_Web.Controllers
     public class AccountController : Controller
     {
 
-
         private readonly SignInManager<Users> signInManager;
         private readonly UserManager<Users> userManager;
 
@@ -52,6 +51,10 @@ namespace HomeOwners_CasaMira_Web.Controllers
                     if (await userManager.IsInRoleAsync(user, "Admin"))
                     {
                         return RedirectToAction("Dashboard", "Admin"); // Redirect to Admin Panel
+                    }
+                    else if (await userManager.IsInRoleAsync(user, "Staff"))
+                    {
+                        return RedirectToAction("Dashboard", "Staff");  
                     }
 
                     return RedirectToAction("Index", "Home"); // Normal users go to Home

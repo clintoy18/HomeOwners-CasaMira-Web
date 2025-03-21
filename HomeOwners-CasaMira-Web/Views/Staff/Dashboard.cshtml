@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Staff Dashboard";
+    Layout = "_StaffLayout"; // Uses Admin Layout
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-white"> Admin Dashboard</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+   
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h4 class="mb-3">This is Staff!</h4>
+
+            </div>
+        </div>
+
+       
+    </div>
+</div>

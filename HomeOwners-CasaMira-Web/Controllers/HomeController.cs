@@ -18,6 +18,8 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View();
         }
 
+  
+
         [Authorize]
         public IActionResult Privacy()
         {

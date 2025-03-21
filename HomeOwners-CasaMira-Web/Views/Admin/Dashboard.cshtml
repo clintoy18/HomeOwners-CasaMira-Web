@@ -4,7 +4,7 @@
 }
 
 <div class="container mt-4">
-    <h2 class="text-center mb-4">📊 Admin Dashboard</h2>
+    <h2 class="text-center mb-4 text-white"> Admin Dashboard</h2>
 
     @if (TempData["SuccessMessage"] != null)
     {
@@ -15,7 +15,7 @@
         <!-- Left Column: Announcement Form -->
         <div class="col-md-6">
             <div class="card shadow-sm p-4">
-                <h4 class="mb-3">📢 Post Announcement</h4>
+                <h4 class="mb-3">Post Announcement</h4>
 
                 <form asp-controller="Admin" asp-action="CreateAnnouncement" method="post">
                     @Html.AntiForgeryToken()
@@ -28,7 +28,7 @@
                         <label class="form-label">Content</label>
                         <textarea class="form-control" name="Content" rows="3" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">📌 Post Announcement</button>
+                    <button type="submit" class="btn btn-primary w-100"> Post Announcement</button>
                 </form>
             </div>
         </div>
