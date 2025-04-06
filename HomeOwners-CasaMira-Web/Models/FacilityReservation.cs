@@ -3,32 +3,15 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HomeOwners_CasaMira_Web.Models
+{public class FacilityReservation
 {
-    public class FacilityReservation
-    {
-        [Key]
-        public int Id { get; set; }
+    public int Id { get; set; }
+    public string UserId { get; set; }
+    public int FacilityId { get; set; }  // New field for the facility
+    public DateTime ReservationDate { get; set; }
+    public TimeSpan StartTime { get; set; }
+    public TimeSpan EndTime { get; set; }
+    public string Status { get; set; }
+}
 
-        [Required]
-        public string UserId { get; set; }
-
-        [ForeignKey("UserId")]
-        public Users User { get; set; }
-
-        [Required]
-        public int FacilityId { get; set; } // Ensure this column exists
-
-        [ForeignKey("FacilityId")]
-        public Facility Facility { get; set; }
-
-        [Required]
-        public DateTime ReservationDate { get; set; }
-
-        [Required]
-        public TimeSpan StartTime { get; set; } // Ensure these columns exist
-        [Required]
-        public TimeSpan EndTime { get; set; }
-
-        public string Status { get; set; } = "Pending"; // Ensure this column exists
-    }
 }
