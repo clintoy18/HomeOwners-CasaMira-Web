@@ -26,7 +26,6 @@ namespace HomeOwners_CasaMira_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Check if the user exists
                 var user = await userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
@@ -34,46 +33,43 @@ namespace HomeOwners_CasaMira_Web.Controllers
                     return View(model);
                 }
 
-                // Verify the password
-                bool passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
+                var passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
                 if (!passwordValid)
                 {
                     ModelState.AddModelError("", "Invalid password.");
                     return View(model);
                 }
 
-                // Sign in the user
-                var result = await signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, false);
+                var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
-                    // 🔹 Check if user is an Admin
-                    if (await userManager.IsInRoleAsync(user, "Admin"))
+                    var roles = await userManager.GetRolesAsync(user);
+                    if (roles.Contains("Admin"))
                     {
-                        return RedirectToAction("Dashboard", "Admin"); // Redirect to Admin Panel
+                        return RedirectToAction("Dashboard", "Admin");
                     }
-                    else if (await userManager.IsInRoleAsync(user, "Staff"))
+                    else if (roles.Contains("Staff"))
                     {
-                        return RedirectToAction("Dashboard", "Staff");  
+                        return RedirectToAction("Dashboard", "Staff");
                     }
-
-                    return RedirectToAction("Index", "Home"); // Normal users go to Home
+                    else
+                    {
+                        return RedirectToAction("Index", "Home"); // For normal users
+                    }
                 }
                 else if (result.IsLockedOut)
                 {
                     ModelState.AddModelError("", "User account locked out.");
                 }
-                else if (result.IsNotAllowed)
-                {
-                    ModelState.AddModelError("", "User is not allowed to sign in.");
-                }
                 else
                 {
-                    ModelState.AddModelError("", "Email or password is incorrect");
+                    ModelState.AddModelError("", "Email or password is incorrect.");
                 }
             }
             return View(model);
         }
+
 
 
         public IActionResult Register()
@@ -94,7 +90,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                     UserName = model.Email,
                     Address = model.Address,
                     DateOfBirth = model.DateOfBirth,
-                    Role = model.Role // 👈 Save the Role
+                    Role = model.Role 
                 };
 
                 var result = await userManager.CreateAsync(user, model.Password);
