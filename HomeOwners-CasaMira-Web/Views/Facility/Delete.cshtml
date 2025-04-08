@@ -4,11 +4,23 @@
     ViewData["Title"] = "Delete Facility";
 }
 
-<h1>Delete Facility</h1>
+<div class="container mt-5">
+    <div class="bg-white p-4 rounded shadow-sm">
+        <h1 class="mb-4 text-danger">
+            <i class="bi bi-trash-fill me-2"></i> Delete Facility
+        </h1>
 
-<p>Are you sure you want to delete the facility <strong>@Model.Name</strong>?</p>
+        <p class="lead">
+            Are you sure you want to delete the facility <strong>@Model.Name</strong>?
+        </p>
 
-<form method="post">
-    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-    <a href="@Url.Action("Index", "Facility")" class="btn btn-secondary">Cancel</a>
-</form>
+        <div class="d-flex justify-content-between">
+            <form method="post">
+                <button type="submit" class="btn btn-danger btn-lg">Yes, Delete</button>
+            </form>
+            <a href="@Url.Action("Index", "Facility")" class="btn btn-secondary btn-lg">Cancel</a>
+        </div>
+    </div>
+</div>
+
+<!-- Optional: You can add an icon or image related to the action here for better visuals -->
