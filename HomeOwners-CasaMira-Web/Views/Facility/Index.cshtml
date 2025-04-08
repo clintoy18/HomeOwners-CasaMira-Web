@@ -2,35 +2,68 @@
 
 @{
     ViewData["Title"] = "Facilities";
+    var successMessage = TempData["SuccessMessage"];
 }
 
-<h1>Facilities List</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Is Available</th>
-            <th>Image</th>
-        </tr>
-    </thead>
-    <tbody class="text-white    ">
-        @foreach (var facility in Model)
-        {
-            <tr>
-                <td>@facility.Name</td>
-                <td>@facility.Description</td>
-                <td>@facility.IsAvailable ? "Available" : "Not Available"</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(facility.ImageUrl))
-                    {
-                        <img src="@facility.ImageUrl" alt="@facility.Name" style="width: 100px; height: 100px; object-fit: cover;" />
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@if (successMessage != null)
+{
+    <div class="alert alert-success">
+        @successMessage
+    </div>
+}
 
-<a asp-action="Create" class="btn btn-primary">Create New Facility</a>
+
+<div class="container mt-5">
+    <div class="bg-white p-4 rounded shadow-sm">
+        <h1 class="mb-4 text-primary">
+            <i class="bi bi-building me-2"></i> Facilities List
+        </h1>
+
+        <!-- Table to display the facilities -->
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Is Available</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var facility in Model)
+                {
+                    // Applying background color based on availability (1 = Available)
+                    var backgroundColor = facility.IsAvailable ? "bg-success text-white" : "bg-light";
+
+                    <tr class="@backgroundColor">
+                        <td>
+                            <i class="bi bi-building me-2"></i>@facility.Name
+                        </td>
+                        <td>@facility.Description</td>
+                        <td>@facility.IsAvailable ? "Available" : "Not Available"</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(facility.ImageUrl))
+                            {
+                                <img src="@facility.ImageUrl" alt="@facility.Name" style="width: 100px; height: 100px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <span>No Image</span>
+                            }
+                        </td>
+                        <td>
+                            <!-- Button to edit or delete the facility -->
+                            <a asp-action="Edit" asp-route-id="@facility.Id" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@facility.Id" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Button to create a new facility -->
+        <a asp-action="Create" class="btn btn-primary">Create New Facility</a>
+    </div>
+</div>

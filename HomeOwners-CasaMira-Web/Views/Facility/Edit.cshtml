@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +27,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View();
         }
 
-       // POST: Facility/Create
+        // POST: Facility/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description,IsAvailable")] Facility facility, IFormFile imageFile)
@@ -50,15 +50,12 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
                 _context.Add(facility);
                 await _context.SaveChangesAsync();
-
-                // Set a success message
-                TempData["SuccessMessage"] = "Facility created successfully!";
-
                 return RedirectToAction(nameof(Index));
             }
 
             return View(facility);
         }
+
         // GET: Facility
         public async Task<IActionResult> Index()
         {
@@ -160,12 +157,13 @@ namespace HomeOwners_CasaMira_Web.Controllers
         }
 
         // POST: Facility/Delete/5
-        [HttpPost, ActionName("Delete")]
+       [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var facility = await _context.Facilities.FindAsync(id);
 
+            // Check if the facility was found
             if (facility == null)
             {
                 return NotFound();
@@ -183,13 +181,9 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
             _context.Facilities.Remove(facility);
             await _context.SaveChangesAsync();
-
-            // Set a success message
-            TempData["SuccessMessage"] = "Facility deleted successfully!";
-
-            // Redirect to the Index page after successful deletion
-            return RedirectToAction(nameof(Index));  // This will refresh the index page
+            return RedirectToAction(nameof(Index));
         }
+
 
         private bool FacilityExists(int id)
         {

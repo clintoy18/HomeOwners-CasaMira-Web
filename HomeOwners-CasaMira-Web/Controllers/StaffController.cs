@@ -24,7 +24,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
         }
 
 
-        public IActionResult Request()
+        public new IActionResult Request()
         {
 
             return View();

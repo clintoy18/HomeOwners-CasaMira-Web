@@ -1,0 +1,14 @@
+@model HomeOwners_CasaMira_Web.Models.Facility
+
+@{
+    ViewData["Title"] = "Delete Facility";
+}
+
+<h1>Delete Facility</h1>
+
+<p>Are you sure you want to delete the facility <strong>@Model.Name</strong>?</p>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="@Url.Action("Index", "Facility")" class="btn btn-secondary">Cancel</a>
+</form>
