@@ -34,7 +34,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 _context.Announcements.Add(model);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "📢 Announcement posted successfully!";
+                TempData["SuccessMessage"] = "Announcement posted successfully!";
                 return RedirectToAction("Dashboard"); // Redirects after posting
             }
 

@@ -16,8 +16,6 @@ namespace HomeOwners_CasaMira_Web.Models
         public bool IsAvailable { get; set; } = true;
 
         [StringLength(255)]
-        public string ImageUrl { get; set; }  // New column for image URL
+        public string ImageUrl { get; set; }  // Image URL will be saved here
     }
-
-
 }

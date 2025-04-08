@@ -1,8 +1,11 @@
-﻿using HomeOwners_CasaMira_Web.Data;
-using HomeOwners_CasaMira_Web.Models;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Threading.Tasks;
+using HomeOwners_CasaMira_Web.Data;
+using HomeOwners_CasaMira_Web.Models;
 
 namespace HomeOwners_CasaMira_Web.Controllers
 {
@@ -10,10 +13,12 @@ namespace HomeOwners_CasaMira_Web.Controllers
     public class FacilityController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public FacilityController(AppDbContext context)
+        public FacilityController(AppDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Facility/Create
@@ -25,14 +30,29 @@ namespace HomeOwners_CasaMira_Web.Controllers
         // POST: Facility/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,IsAvailable,ImageUrl")] Facility facility)
+        public async Task<IActionResult> Create([Bind("Name,Description,IsAvailable")] Facility facility, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
+                if (imageFile != null)
+                {
+                    // Save the image to the wwwroot/images folder
+                    string fileName = Path.GetFileName(imageFile.FileName);
+                    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await imageFile.CopyToAsync(stream);
+                    }
+
+                    facility.ImageUrl = "/images/" + fileName; // Store the relative image URL
+                }
+
                 _context.Add(facility);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(facility);
         }
 
@@ -43,5 +63,4 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View(facilities);
         }
     }
-
 }
