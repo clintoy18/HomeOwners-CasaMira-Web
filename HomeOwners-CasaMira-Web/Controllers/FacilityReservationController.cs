@@ -45,6 +45,28 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View(reservations);
         }
 
+
+        // GET: FacilityReservationController/Calendar
+
+        public IActionResult Calendar()
+        {
+            // Fetch all reservations
+            var reservations = _context.FacilityReservations
+                .Select(r => new
+                {
+                    Title = _context.Facilities.FirstOrDefault(f => f.Id == r.FacilityId).Name,
+                    Start = r.ReservationDate.Add(r.StartTime),
+                    End = r.ReservationDate.Add(r.EndTime),
+                    Status = r.Status
+                })
+                .ToList();
+
+            // Pass reservations as JSON to the view
+            ViewBag.Reservations = System.Text.Json.JsonSerializer.Serialize(reservations);
+
+            return View();
+        }
+
         // GET: FacilityReservationController/Create
         public IActionResult Create()
         {
