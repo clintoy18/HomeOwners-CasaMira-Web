@@ -96,6 +96,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
                 if (overlappingReservation != null)
                 {
+<<<<<<< HEAD
                     // Add an error message if there is an overlap
                     ModelState.AddModelError(string.Empty, "The selected time slot is already reserved for this facility.");
                 }
@@ -109,6 +110,9 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
                     TempData["SuccessMessage"] = "Reservation created successfully!";
                     return RedirectToAction(nameof(Index));
+=======
+                    _context.Facilities.Update(facility);
+>>>>>>> 543d030ccf5615f6efbb471f18e159dc875d514a
                 }
             }
 
