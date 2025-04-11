@@ -1,5 +1,45 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model HomeOwners_CasaMira_Web.Models.FacilityReservation
+
 @{
+    ViewData["Title"] = "Create Reservation";
+    var facilities = ViewBag.AvailableFacilities as List<HomeOwners_CasaMira_Web.Models.Facility>;
+}
+
+<h2>Create Reservation</h2>
+
+@if (facilities == null || !facilities.Any())
+{
+    <p class="text-danger">No available facilities to reserve.</p>
+}
+else
+{
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label for="FacilityId" class="form-label">Select Facility</label>
+            <select asp-for="FacilityId" class="form-control" id="FacilityId" required>
+                <option value="">-- Select a Facility --</option>
+                @foreach (var facility in facilities)
+                {
+                    <option value="@facility.Id">@facility.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ReservationDate" class="form-label">Reservation Date</label>
+            <input asp-for="ReservationDate" class="form-control" type="date" required />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="StartTime" class="form-label">Start Time</label>
+            <input asp-for="StartTime" class="form-control" type="time" required />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="EndTime" class="form-label">End Time</label>
+            <input asp-for="EndTime" class="form-control" type="time" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 }

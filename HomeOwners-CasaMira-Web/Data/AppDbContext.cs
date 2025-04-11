@@ -11,8 +11,6 @@ namespace HomeOwners_CasaMira_Web.Data
         public AppDbContext(DbContextOptions options) : base(options){ }
         public DbSet<Announcement> Announcements { get; set; }
         public DbSet<FacilityReservation> FacilityReservations { get; set; }
-
-        public DbSet<FacilityReservation> FacilityReservation { get; set; }
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<Facility> Facilities { get; set; }
