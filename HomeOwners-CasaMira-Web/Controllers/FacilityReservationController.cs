@@ -91,7 +91,6 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 var facility = await _context.Facilities.FindAsync(reservation.FacilityId);
                 if (facility != null)
                 {
-                    facility.IsAvailable = false;
                     _context.Facilities.Update(facility);
                 }
                 // Save changes to the database
