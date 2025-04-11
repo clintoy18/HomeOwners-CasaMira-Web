@@ -13,9 +13,14 @@
                 style="font-size: 32px; letter-spacing: 0.15em;">
                 Amenities
             </h1>
-            <a asp-action="Create" class="btn btn-success btn-lg px-4 py-2" style="font-size: 18px;">
-                + Create Reservation
-            </a>
+            <div class="d-flex gap-2">
+                <a asp-action="Create" class="btn btn-success btn-lg px-4 py-2" style="font-size: 18px;">
+                    + Create Reservation
+                </a>
+                <a asp-action="MyReservations" class="btn btn-success btn-lg px-4 py-2" style="font-size: 18px;">
+                    My Reservations
+                </a>
+            </div>
         </div>
 
         <!-- Amenities Grid -->

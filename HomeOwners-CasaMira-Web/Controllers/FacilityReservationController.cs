@@ -28,6 +28,23 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View(facilities);
         }
 
+
+
+       // GET: FacilityReservationController/MyReservations
+        public IActionResult MyReservations()
+        {
+            // Get the logged-in user's ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Fetch reservations for the logged-in user
+            var reservations = _context.FacilityReservations
+                .Where(r => r.UserId == userId)
+                .ToList();
+
+            // Pass the reservations to the view
+            return View(reservations);
+        }
+
         // GET: FacilityReservationController/Create
         public IActionResult Create()
         {
