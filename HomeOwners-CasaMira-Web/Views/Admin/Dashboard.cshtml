@@ -33,12 +33,12 @@
             </div>
         </div>
 
-        <!-- Right Column: Pie Chart -->
+        <!-- Right Column: User Statistics Chart -->
         <div class="col-md-6">
             <div class="card shadow-sm p-4">
-                <h4 class="mb-3">📊 Announcement Statistics</h4>
+                <h4 class="mb-3">📊 User Statistics</h4>
                 <div style="height: 350px;">
-                    <canvas id="announcementChart"></canvas>
+                    <canvas id="userChart"></canvas>
                 </div>
             </div>
         </div>
@@ -48,20 +48,20 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const announcementData = {
-            General: 5,
-            Event: 3,
-            Update: 2
+        // Replace this with actual data from your backend
+        const userData = {
+            Homeowner: 120,
+            Staff: 30
         };
 
-        const ctx = document.getElementById("announcementChart").getContext("2d");
+        const ctx = document.getElementById("userChart").getContext("2d");
         new Chart(ctx, {
             type: "pie",
             data: {
-                labels: Object.keys(announcementData),
+                labels: Object.keys(userData),
                 datasets: [{
-                    data: Object.values(announcementData),
-                    backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"]
+                    data: Object.values(userData),
+                    backgroundColor: ["#4CAF50", "#FFC107"]
                 }]
             },
             options: {

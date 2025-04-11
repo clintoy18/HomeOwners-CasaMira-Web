@@ -55,7 +55,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home"); // For normal users
+                        return RedirectToAction("Index", "Home"); 
                     }
                 }
                 else if (result.IsLockedOut)
