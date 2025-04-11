@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using HomeOwners_CasaMira_Web.Data;
 using HomeOwners_CasaMira_Web.Models;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace HomeOwners_CasaMira_Web.Controllers
 {
@@ -25,6 +27,24 @@ namespace HomeOwners_CasaMira_Web.Controllers
         // GET: FacilityReservationController/Create
         public IActionResult Create()
         {
+            var availableFacilities = _context.Facilities
+                .Where(f => f.IsAvailable)
+                .ToList();
+
+            if (!availableFacilities.Any())
+            {
+                Console.WriteLine("No available facilities found.");
+            }
+            else
+            {
+                foreach (var facility in availableFacilities)
+                {
+                    Console.WriteLine($"Facility: {facility.Name}, Available: {facility.IsAvailable}");
+                }
+            }
+
+            ViewBag.AvailableFacilities = availableFacilities;
+
             return View();
         }
 
@@ -33,8 +53,39 @@ namespace HomeOwners_CasaMira_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FacilityReservation reservation)
         {
-            // Placeholder for reservation creation logic (removed).
-            return RedirectToAction(nameof(Index));
+            // Set the UserId to the currently logged-in user
+            reservation.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Set the default status
+            reservation.Status = "Pending";
+
+            // Remove UserId and Status from ModelState validation
+            ModelState.Remove(nameof(reservation.UserId));
+            ModelState.Remove(nameof(reservation.Status));
+
+            if (ModelState.IsValid)
+            {
+                // Add the reservation to the database
+                _context.FacilityReservations.Add(reservation);
+                // Optionally mark the facility as unavailable
+                var facility = await _context.Facilities.FindAsync(reservation.FacilityId);
+                if (facility != null)
+                {
+                    facility.IsAvailable = false;
+                    _context.Facilities.Update(facility);
+                }
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Reservation created successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Reload available facilities if the model is invalid
+            ViewBag.AvailableFacilities = _context.Facilities
+                .Where(f => f.IsAvailable)
+                .ToList();
+
+            return View(reservation);
         }
 
         // GET: FacilityReservationController/Details/5
