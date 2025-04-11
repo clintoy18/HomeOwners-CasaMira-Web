@@ -7,39 +7,43 @@
 
 <h2>Create Reservation</h2>
 
-@if (facilities == null || !facilities.Any())
-{
-    <p class="text-danger">No available facilities to reserve.</p>
-}
-else
-{
-    <form asp-action="Create" method="post">
-        <div class="mb-3">
-            <label for="FacilityId" class="form-label">Select Facility</label>
-            <select asp-for="FacilityId" class="form-control" id="FacilityId" required>
-                <option value="">-- Select a Facility --</option>
-                @foreach (var facility in facilities)
-                {
-                    <option value="@facility.Id">@facility.Name</option>
-                }
-            </select>
+<form asp-action="Create" method="post">
+    <!-- Display Validation Errors -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
         </div>
+    }
 
-        <div class="mb-3">
-            <label asp-for="ReservationDate" class="form-label">Reservation Date</label>
-            <input asp-for="ReservationDate" class="form-control" type="date" required />
-        </div>
+    <div class="mb-3">
+        <label for="FacilityId" class="form-label">Select Facility</label>
+        <select asp-for="FacilityId" class="form-control" id="FacilityId" required>
+            <option value="">-- Select a Facility --</option>
+            @foreach (var facility in facilities)
+            {
+                <option value="@facility.Id">@facility.Name</option>
+            }
+        </select>
+    </div>
 
-        <div class="mb-3">
-            <label asp-for="StartTime" class="form-label">Start Time</label>
-            <input asp-for="StartTime" class="form-control" type="time" required />
-        </div>
+    <div class="mb-3">
+        <label asp-for="ReservationDate" class="form-label">Reservation Date</label>
+        <input asp-for="ReservationDate" class="form-control" type="date" required />
+    </div>
 
-        <div class="mb-3">
-            <label asp-for="EndTime" class="form-label">End Time</label>
-            <input asp-for="EndTime" class="form-control" type="time" required />
-        </div>
+    <div class="mb-3">
+        <label asp-for="StartTime" class="form-label">Start Time</label>
+        <input asp-for="StartTime" class="form-control" type="time" required />
+    </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-}
+    <div class="mb-3">
+        <label asp-for="EndTime" class="form-label">End Time</label>
+        <input asp-for="EndTime" class="form-control" type="time" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

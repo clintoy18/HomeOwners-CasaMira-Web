@@ -85,19 +85,31 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
             if (ModelState.IsValid)
             {
-                // Add the reservation to the database
-                _context.FacilityReservations.Add(reservation);
-                // Optionally mark the facility as unavailable
-                var facility = await _context.Facilities.FindAsync(reservation.FacilityId);
-                if (facility != null)
+                // Check for overlapping reservations for the same facility
+                var overlappingReservation = _context.FacilityReservations
+                    .Where(r => r.FacilityId == reservation.FacilityId &&
+                                r.ReservationDate == reservation.ReservationDate &&
+                                ((reservation.StartTime >= r.StartTime && reservation.StartTime < r.EndTime) || // Overlaps start
+                                 (reservation.EndTime > r.StartTime && reservation.EndTime <= r.EndTime) ||   // Overlaps end
+                                 (reservation.StartTime <= r.StartTime && reservation.EndTime >= r.EndTime))) // Fully overlaps
+                    .FirstOrDefault();
+
+                if (overlappingReservation != null)
                 {
-                    facility.IsAvailable = false;
-                    _context.Facilities.Update(facility);
+                    // Add an error message if there is an overlap
+                    ModelState.AddModelError(string.Empty, "The selected time slot is already reserved for this facility.");
                 }
-                // Save changes to the database
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Reservation created successfully!";
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    // Add the reservation to the database
+                    _context.FacilityReservations.Add(reservation);
+
+                    // Save changes to the database
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Reservation created successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             // Reload available facilities if the model is invalid
