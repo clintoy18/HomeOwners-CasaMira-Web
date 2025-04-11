@@ -21,7 +21,11 @@ namespace HomeOwners_CasaMira_Web.Controllers
         // GET: FacilityReservationController
         public IActionResult Index()
         {
-            return View();
+            // Fetch all facilities and their details
+            var facilities = _context.Facilities.ToList();
+
+            // Pass the facilities to the view
+            return View(facilities);
         }
 
         // GET: FacilityReservationController/Create
@@ -55,7 +59,6 @@ namespace HomeOwners_CasaMira_Web.Controllers
         {
             // Set the UserId to the currently logged-in user
             reservation.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             // Set the default status
             reservation.Status = "Pending";
 
