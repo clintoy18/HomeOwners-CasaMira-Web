@@ -118,7 +118,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                             await imageFile.CopyToAsync(stream);
                         }
 
-                        facility.ImageUrl = "/images/" + fileName; // Store the relative image URL
+                        facility.ImageUrl = "css/images/" + fileName; // Store the relative image URL
                     }
 
                     _context.Update(facility);
