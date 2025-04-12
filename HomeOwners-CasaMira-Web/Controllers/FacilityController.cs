@@ -27,7 +27,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View();
         }
 
-       // POST: Facility/Create
+        // POST: Facility/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description,IsAvailable")] Facility facility, IFormFile imageFile)
@@ -36,9 +36,16 @@ namespace HomeOwners_CasaMira_Web.Controllers
             {
                 if (imageFile != null)
                 {
+                    // Ensure the images directory exists
+                    string imagesDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                    if (!Directory.Exists(imagesDirectory))
+                    {
+                        Directory.CreateDirectory(imagesDirectory);
+                    }
+
                     // Save the image to the wwwroot/images folder
                     string fileName = Path.GetFileName(imageFile.FileName);
-                    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", fileName);
+                    string filePath = Path.Combine(imagesDirectory, fileName);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
@@ -59,6 +66,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
             return View(facility);
         }
+
         // GET: Facility
         public async Task<IActionResult> Index()
         {
@@ -99,6 +107,13 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 {
                     if (imageFile != null)
                     {
+                        // Ensure the images directory exists
+                        string imagesDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                        if (!Directory.Exists(imagesDirectory))
+                        {
+                            Directory.CreateDirectory(imagesDirectory);
+                        }
+
                         // Delete old image if exists
                         if (!string.IsNullOrEmpty(facility.ImageUrl))
                         {
@@ -111,14 +126,14 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
                         // Save the new image
                         string fileName = Path.GetFileName(imageFile.FileName);
-                        string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", fileName);
+                        string filePath = Path.Combine(imagesDirectory, fileName);
 
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await imageFile.CopyToAsync(stream);
                         }
 
-                        facility.ImageUrl = "css/images/" + fileName; // Store the relative image URL
+                        facility.ImageUrl = "/images/" + fileName; // Store the relative image URL
                     }
 
                     _context.Update(facility);
@@ -136,6 +151,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                     }
                 }
 
+                TempData["SuccessMessage"] = "Facility updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
             return View(facility);
@@ -172,7 +188,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
             }
 
             // Delete the image file if it exists
-            if (!string.IsNullOrEmpty(facility.ImageUrl)) // Check if the ImageUrl is not null or empty
+            if (!string.IsNullOrEmpty(facility.ImageUrl))
             {
                 var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, facility.ImageUrl.TrimStart('/'));
                 if (System.IO.File.Exists(imagePath))
@@ -184,11 +200,56 @@ namespace HomeOwners_CasaMira_Web.Controllers
             _context.Facilities.Remove(facility);
             await _context.SaveChangesAsync();
 
-            // Set a success message
             TempData["SuccessMessage"] = "Facility deleted successfully!";
+            return RedirectToAction(nameof(Index));
+        }
 
-            // Redirect to the Index page after successful deletion
-            return RedirectToAction(nameof(Index));  // This will refresh the index page
+        // GET: Facility/Details
+        public async Task<IActionResult> Details()
+        {
+            // Fetch all reservations
+            var reservations = await _context.FacilityReservations
+                .OrderByDescending(r => r.ReservationDate)
+                .Select(r => new
+                {
+                    r.ReservationDate,
+                    r.StartTime,
+                    r.EndTime,
+                    r.Status,
+                    r.UserId,
+                    FacilityName = _context.Facilities.FirstOrDefault(f => f.Id == r.FacilityId).Name, 
+                    UserFullName = _context.Users.FirstOrDefault(u => u.Id == r.UserId).FullName // Ensure FullName exists
+
+                })
+                .ToListAsync();
+
+            // Pass all reservations to the view
+            ViewBag.Reservations = reservations;
+
+            return View();
+        }
+
+        // GET: Facility/AllReservations
+        public async Task<IActionResult> AllReservations()
+        {
+            // Fetch all reservations with facility name and user full name
+            var reservations = await _context.FacilityReservations
+                .OrderByDescending(r => r.ReservationDate)
+                .Select(r => new
+                {
+                    r.ReservationDate,
+                    r.StartTime,
+                    r.EndTime,
+                    r.Status,
+                    FacilityName = _context.Facilities.FirstOrDefault(f => f.Id == r.FacilityId).Name,
+                    UserFullName = _context.Users.FirstOrDefault(u => u.Id == r.UserId).FullName // Ensure FullName exists
+                })
+                .ToListAsync();
+
+            // Pass all reservations to the view
+            ViewBag.Reservations = reservations;
+
+            return View("Details");
         }
 
         private bool FacilityExists(int id)
