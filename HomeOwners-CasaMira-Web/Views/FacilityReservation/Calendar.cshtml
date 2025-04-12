@@ -1,0 +1,34 @@
+@{
+    ViewData["Title"] = "Calendar of Activities";
+}
+
+<div class="container mt-5">
+    <div class="bg-white p-5 rounded shadow">
+        <h2 class="text-center fw-bold text-uppercase text-dark mb-4" style="font-size: 28px; letter-spacing: 0.1em;">
+            Calendar of Activities
+        </h2>
+
+        <!-- Calendar -->
+        <div id="calendar"></div>
+    </div>
+</div>
+
+<!-- Include FullCalendar CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: @Html.Raw(ViewBag.Reservations) // Load reservations from the controller
+        });
+        calendar.render();
+    });
+</script>
