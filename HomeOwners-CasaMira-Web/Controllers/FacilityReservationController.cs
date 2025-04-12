@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace HomeOwners_CasaMira_Web.Controllers
 {
-    [Authorize]
+   [Authorize(Roles = "HomeOwner")]  
     public class FacilityReservationController : Controller
     {
         private readonly AppDbContext _context;

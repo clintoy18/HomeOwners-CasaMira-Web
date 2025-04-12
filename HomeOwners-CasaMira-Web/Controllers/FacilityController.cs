@@ -114,7 +114,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                             Directory.CreateDirectory(imagesDirectory);
                         }
 
-                        // Delete old image if exists
+                        // Delete old image if it exists
                         if (!string.IsNullOrEmpty(facility.ImageUrl))
                         {
                             var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, facility.ImageUrl.TrimStart('/'));
@@ -154,6 +154,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 TempData["SuccessMessage"] = "Facility updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(facility);
         }
 
