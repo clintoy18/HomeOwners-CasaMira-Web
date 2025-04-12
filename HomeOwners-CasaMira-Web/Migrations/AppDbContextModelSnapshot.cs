@@ -88,7 +88,6 @@ namespace HomeOwners_CasaMira_Web.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -97,7 +96,8 @@ namespace HomeOwners_CasaMira_Web.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
@@ -130,44 +130,11 @@ namespace HomeOwners_CasaMira_Web.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacilityId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("FacilityReservation");
-                });
-
-            modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.Payment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Payments");
+                    b.ToTable("FacilityReservations");
                 });
 
             modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.ServiceRequest", b =>
@@ -411,36 +378,6 @@ namespace HomeOwners_CasaMira_Web.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.FacilityReservation", b =>
-                {
-                    b.HasOne("HomeOwners_CasaMira_Web.Models.Facility", "Facility")
-                        .WithMany()
-                        .HasForeignKey("FacilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HomeOwners_CasaMira_Web.Models.Users", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Facility");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.Payment", b =>
-                {
-                    b.HasOne("HomeOwners_CasaMira_Web.Models.Users", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.ServiceRequest", b =>

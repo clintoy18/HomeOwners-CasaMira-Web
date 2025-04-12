@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeOwners_CasaMira_Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250319042359_AddPayments")]
-    partial class AddPayments
+    [Migration("20250412070426_InitialIdentity")]
+    partial class InitialIdentity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,6 +53,60 @@ namespace HomeOwners_CasaMira_Web.Migrations
                     b.ToTable("Announcements");
                 });
 
+            modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.Document", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.Facility", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Facilities");
+                });
+
             modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.FacilityReservation", b =>
                 {
                     b.Property<int>("Id")
@@ -61,12 +115,21 @@ namespace HomeOwners_CasaMira_Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FacilityName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("FacilityId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ReservationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -77,7 +140,7 @@ namespace HomeOwners_CasaMira_Web.Migrations
                     b.ToTable("FacilityReservations");
                 });
 
-            modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.Payment", b =>
+            modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.ServiceRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -85,11 +148,12 @@ namespace HomeOwners_CasaMira_Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("PaymentDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("RequestType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -103,7 +167,7 @@ namespace HomeOwners_CasaMira_Web.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("ServiceRequests");
                 });
 
             modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.Users", b =>
@@ -319,7 +383,7 @@ namespace HomeOwners_CasaMira_Web.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.Payment", b =>
+            modelBuilder.Entity("HomeOwners_CasaMira_Web.Models.ServiceRequest", b =>
                 {
                     b.HasOne("HomeOwners_CasaMira_Web.Models.Users", "User")
                         .WithMany()
