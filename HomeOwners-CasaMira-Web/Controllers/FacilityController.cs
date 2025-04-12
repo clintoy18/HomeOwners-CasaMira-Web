@@ -159,35 +159,37 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View(facility);
         }
 
-        [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        var facility = await _context.Facilities.FindAsync(id);
-
-        if (facility == null)
+        // POST: Facility/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            return NotFound();
-        }
+            var facility = await _context.Facilities.FindAsync(id);
 
-        // Delete the image file if it exists
-        if (!string.IsNullOrEmpty(facility.ImageUrl))
-        {
-            var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, facility.ImageUrl.TrimStart('/'));
-            if (System.IO.File.Exists(imagePath))
+            if (facility == null)
             {
-                System.IO.File.Delete(imagePath);
+                return NotFound();
             }
+
+            // Delete the image file if it exists
+            if (!string.IsNullOrEmpty(facility.ImageUrl)) // Check if the ImageUrl is not null or empty
+            {
+                var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, facility.ImageUrl.TrimStart('/'));
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+            }
+
+            _context.Facilities.Remove(facility);
+            await _context.SaveChangesAsync();
+
+            // Set a success message
+            TempData["SuccessMessage"] = "Facility deleted successfully!";
+
+            // Redirect to the Index page after successful deletion
+            return RedirectToAction(nameof(Index));  // This will refresh the index page
         }
-
-        _context.Facilities.Remove(facility);
-        await _context.SaveChangesAsync();
-
-        // Set a success message
-        TempData["SuccessMessage"] = "Facility deleted successfully!";
-
-        return RedirectToAction(nameof(Index));  // This will refresh the index page
-    }
 
         private bool FacilityExists(int id)
         {
