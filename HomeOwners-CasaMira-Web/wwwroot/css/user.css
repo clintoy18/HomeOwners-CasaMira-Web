@@ -5,11 +5,12 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+
 }
 
 /* Default Sidebar Style */
 .sidebar {
-    background-color: rgba(148, 120, 96, 0.9); /* Semi-transparent for better visibility */
+    background-color: #183B4E; /* Semi-transparent for better visibility */
     width: 250px;
     transition: all 0.3s ease-in-out;
     z-index: 1000;
@@ -18,7 +19,25 @@
     display: flex;
     flex-direction: column;
     padding-top: 20px;
+    font-family: 'Poppins', sans-serif;
 }
+
+.line-separator {
+    width: 2px; /* Set width of the line */
+    height: 20px; /* Set height of the line (adjust as needed) */
+    background-color: #fff; /* White color for the line (can be changed) */
+}
+
+.social-icons a {
+    font-size: 1rem; /* Icon size */
+    text-decoration: none;
+    color: #fff;
+    margin-right: 20px;
+}
+
+    .social-icons a:hover {
+        color: #ffbb33; /* Color on hover */
+    }
 
 /* Sidebar Header */
 .sidebar-header {
