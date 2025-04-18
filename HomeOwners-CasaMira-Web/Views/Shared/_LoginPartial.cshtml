@@ -5,10 +5,26 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <nav id="sidebar" class="sidebar vh-100 position-fixed d-flex flex-column">
-        <div class="text-center pt-3">
-            <h1 class="mb-0 sidebar-text text-white">CASA MIRA</h1>
-            <h5 class="mb-3 sidebar-text text-white">HomeOwners</h5>
+        <div class="d-flex justify-content-between align-items-center p-3">
+            <h1 class="mb-0 mt-0 text-center text-white fs-6" style="margin-left: 25px;">CASAMIRA</h1>
+            <!--h5 class="mb-3 sidebar-text text-white">HomeOwners</!--h5-->
+
+            <div class="line-separator"></div> <!-- Add margin to space out the line -->
+
+
+            <div class="social-icons d-flex" style="margin-right: 30px;">
+                <a href="https://facebook.com" target="_blank" class="text-white me-2">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="https://twitter.com" target="_blank" class="text-white me-2">
+                    <i class="bi bi-twitter"></i>
+                </a>
+                <!-- You can add more social media icons if needed -->
+            </div>
         </div>
+
+
+
 
         <!-- Toggle Button -->
         <button id="toggleSidebar" class="btn text-white position-absolute d-md-none" style="top: 10px; right: 10px;">
@@ -56,7 +72,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link text-white d-flex align-items-center" asp-controller="Home" asp-action="Index">
-                        <i class="bi bi-house me-2"></i> <span class="sidebar-text">Home</span>
+                        <i class="bi bi-house me-2"></i> <span class="sidebar-text">Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item">
