@@ -2,52 +2,184 @@
     ViewData["Title"] = "Rules and Regulations Page";
 }
 
-<div class="text-white text-center">
-    <p class="display-4 fs-1 mb-0 lh-1">WELCOME TO OUR</p>
-    <h1 class="mb-4 lh-1" style="font-size: 5rem; font-weight: bold;">RULES AND REGULATIONS</h1>
+<style>
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #34495e;
+        --accent-color: #3498db;
+        --text-color: #2c3e50;
+        --light-bg: #f5f6fa;
+        --white: #ffffff;
+    }
+
+    body {
+        font-family: 'Roboto', sans-serif;
+        color: var(--text-color);
+        line-height: 1.6;
+    }
+
+    .section-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 3.5rem 2rem;
+        transition: transform 0.3s ease;
+    }
+
+        .section-container:hover {
+            transform: translateY(-3px);
+        }
+
+    .section-containers {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .section-title {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 500;
+        font-size: 2rem;
+        margin-bottom: 1.8rem;
+        position: relative;
+        padding-bottom: 1rem;
+        letter-spacing: 0.5px;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: currentColor;
+        }
+
+    .section-content {
+        font-family: 'Roboto', sans-serif;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        max-width: 750px;
+        margin: 0 auto;
+        color: var(--text-color);
+    }
+
+    .hero-section {
+        background: rgba(148, 120, 96);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        color: white;
+    }
+
+    .hero-title {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 500;
+        font-size: 2.2rem;
+        letter-spacing: 0.5px;
+    }
+
+    .section-light {
+        background-color: var(--light-bg);
+        border-top: 1px solid rgba(0,0,0,0.05);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .section-white {
+        background-color: var(--white);
+        border-top: 1px solid rgba(0,0,0,0.05);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .section-primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: var(--white);
+        border-top: 1px solid rgba(255,255,255,0.1);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .footer {
+        background-color: rgba(148, 120, 96);
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .footer-text {
+        font-family: 'Roboto', sans-serif;
+        color: var(--white);
+        margin: 0;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    .section-content p {
+        margin-bottom: 1.5rem;
+    }
+
+        .section-content p:last-child {
+            margin-bottom: 0;
+        }
+</style>
+
+<div class="hero-section">
+    <div class="section-container text-center">
+        <h1 class="hero-title">RULES AND REGULATIONS</h1>
+    </div>
 </div>
 
 <!-- About the Rules and Regulations -->
-<section class="bg-light py-5">
-    <div class="container text-center">
-        <h2 class="display-5 mb-4">Community Guidelines</h2>
-        <p class="lead">
-            Our community thrives on respect, security, and cooperation. These rules and regulations ensure a peaceful and well-maintained environment for all residents. By following them, we create a harmonious space where everyone can live comfortably and safely.
-        </p>
+<section class="section-light">
+    <div class="section-container text-center">
+        <h2 class="section-title">Community Guidelines</h2>
+        <div class="section-content">
+            <p>
+                Our community thrives on respect, security, and cooperation. These rules and regulations ensure a peaceful and well-maintained environment for all residents. By following them, we create a harmonious space where everyone can live comfortably and safely.
+            </p>
+        </div>
     </div>
 </section>
 
 <!-- Code of Conduct Section -->
-<section class="bg-white py-5">
-    <div class="container text-center">
-        <h2 class="display-5 mb-4">Code of Conduct</h2>
-        <p class="lead">
-            Every resident plays a role in upholding the integrity of our community. Respecting neighbors, maintaining cleanliness, and observing noise regulations contribute to a better living experience for all. Let’s practice courtesy and consideration every day.
-        </p>
+<section class="section-white">
+    <div class="section-container text-center">
+        <h2 class="section-title">Code of Conduct</h2>
+        <div class="section-content">
+            <p>
+                Every resident plays a role in upholding the integrity of our community. Respecting neighbors, maintaining cleanliness, and observing noise regulations contribute to a better living experience for all. Let's practice courtesy and consideration every day.
+            </p>
+        </div>
     </div>
 </section>
 
 <!-- Safety and Security Section -->
-<section class="bg-primary text-white py-5">
-    <div class="container text-center">
-        <h2 class="display-5 mb-4">Safety & Security</h2>
-        <p class="lead">
-            The safety of our residents is our top priority. Adhering to community security measures, reporting suspicious activities, and following emergency procedures help ensure a secure environment where everyone can feel at ease.
-        </p>
+<section class="section-light">
+    <div class="section-container text-center">
+        <h2 class="section-title">Safety & Security</h2>
+        <div class="section-content">
+            <p>
+                The safety of our residents is our top priority. Adhering to community security measures, reporting suspicious activities, and following emergency procedures help ensure a secure environment where everyone can feel at ease.
+            </p>
+        </div>
     </div>
 </section>
 
 <!-- Community Responsibilities Section -->
-<section class="bg-light py-5">
-    <div class="container text-center">
-        <h2 class="display-5 mb-4">Resident Responsibilities</h2>
-        <p class="lead">
-            Being a responsible resident means taking care of shared spaces, following waste disposal guidelines, and participating in community initiatives. By doing our part, we foster a cleaner, more organized, and more welcoming neighborhood.
-        </p>
+<section class="section-white">
+    <div class="section-container text-center">
+        <h2 class="section-title">Resident Responsibilities</h2>
+        <div class="section-content">
+            <p>
+                Being a responsible resident means taking care of shared spaces, following waste disposal guidelines, and participating in community initiatives. By doing our part, we foster a cleaner, more organized, and more welcoming neighborhood.
+            </p>
+        </div>
     </div>
 </section>
 
 <!-- Footer Section -->
-<footer class="bg-dark text-white text-center py-4">
-    <p>&copy; 2025 Casa Mira Homeowners Association | All Rights Reserved</p>
+<footer class="footer text-center">
+    <div class="section-containers">
+        <p class="footer-text">&copy; 2025 Casa Mira Homeowners Association | All Rights Reserved</p>
+    </div>
 </footer>
+
+<!-- Add Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
