@@ -47,7 +47,6 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
 
         // GET: FacilityReservationController/Calendar
-
         public IActionResult Calendar()
         {
             // Fetch all reservations
@@ -99,7 +98,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
             // Set the UserId to the currently logged-in user
             reservation.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             // Set the default status
-            reservation.Status = "Pending";
+            reservation.Status = "Approved";
 
             // Remove UserId and Status from ModelState validation
             ModelState.Remove(nameof(reservation.UserId));
@@ -141,6 +140,27 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
             return View(reservation);
         }
+        // GET: FacilityReservationController/CreateForFacility?facilityId=1040
+    public IActionResult CreateForFacility(int facilityId)
+    {
+        var facility = _context.Facilities.FirstOrDefault(f => f.Id == facilityId && f.IsAvailable);
+
+        if (facility == null)
+        {
+            return NotFound("Facility not found or not available.");
+        }
+
+        // Optional: create a reservation model pre-filled with the facility ID
+        var reservation = new FacilityReservation
+        {
+            FacilityId = facilityId
+        };
+
+        ViewBag.SelectedFacility = facility;
+
+        return View("Create", reservation); // Reuse the Create view
+    }
+
 
         // GET: FacilityReservationController/Details/5
         public IActionResult Details(int id)

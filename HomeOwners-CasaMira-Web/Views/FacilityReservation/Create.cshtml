@@ -2,38 +2,22 @@
 
 @{
     ViewData["Title"] = "Create Reservation";
-    var facilities = ViewBag.AvailableFacilities as List<HomeOwners_CasaMira_Web.Models.Facility>;
+    var selectedFacility = ViewBag.SelectedFacility as HomeOwners_CasaMira_Web.Models.Facility;
 }
 
 <div class="container mt-5">
-    <!-- White Background Wrapper -->
     <div class="bg-white p-5 rounded shadow">
-        <!-- Title -->
         <h2 class="text-center fw-bold text-uppercase text-dark mb-4" style="font-size: 28px; letter-spacing: 0.1em;">
             Create Reservation
         </h2>
 
         <form asp-action="Create" method="post">
-            <!-- Display Validation Errors -->
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="alert alert-danger">
-                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                    {
-                        <p>@error.ErrorMessage</p>
-                    }
-                </div>
-            }
+            @Html.AntiForgeryToken()
 
             <div class="mb-4">
-                <label for="FacilityId" class="form-label fw-bold">Select Facility</label>
-                <select asp-for="FacilityId" class="form-control" id="FacilityId" required>
-                    <option value="">-- Select a Facility --</option>
-                    @foreach (var facility in facilities)
-                    {
-                        <option value="@facility.Id">@facility.Name</option>
-                    }
-                </select>
+                <label class="form-label fw-bold">Facility</label>
+                <input type="text" class="form-control" value="@selectedFacility.Name" readonly />
+                <input type="hidden" asp-for="FacilityId" value="@selectedFacility.Id" />
             </div>
 
             <div class="mb-4">
@@ -51,8 +35,9 @@
                 <input asp-for="EndTime" class="form-control" type="time" required />
             </div>
 
-            <div class="text-center">
+            <div class="text-center d-flex justify-content-center gap-3">
                 <button type="submit" class="btn btn-primary btn-lg px-5">Submit</button>
+                <a asp-action="Index" class="btn btn-secondary btn-lg px-5">Cancel</a>
             </div>
         </form>
     </div>

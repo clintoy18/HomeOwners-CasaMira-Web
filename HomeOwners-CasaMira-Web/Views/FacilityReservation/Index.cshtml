@@ -4,6 +4,15 @@
     ViewData["Title"] = "Amenities Page";
 }
 
+<style>
+    .card-hover:hover {
+    transform: scale(1.03);
+    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+</style>
+
 <!-- Main Content Wrapper -->
 <div class="container mt-5">
     <div class="p-4 rounded shadow" style="background-color: rgba(255, 255, 255, 0.3);">
@@ -14,9 +23,7 @@
                 Amenities
             </h1>
             <div class="d-flex gap-2">
-                <a asp-action="Create" class="btn btn-success btn-lg px-4 py-2" style="font-size: 18px;">
-                    + Create Reservation
-                </a>
+           
                 <a asp-action="MyReservations" class="btn btn-success btn-lg px-4 py-2" style="font-size: 18px;">
                     My Reservations
                 </a>
@@ -30,14 +37,14 @@
                 {
                     <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
                         <a asp-action="CreateForFacility" asp-route-facilityId="@facility.Id" class="text-decoration-none">
-                            <div class="text-center position-relative" style="width: 250px; margin-bottom: 30px;">
+                            <div class="text-center position-relative card-hover" style="width: 250px; margin-bottom: 30px; cursor: pointer;">
                                 <img src="@(string.IsNullOrEmpty(facility.ImageUrl) ? Url.Content("~/css/images/default.png") : facility.ImageUrl)"
                                      class="rounded-circle position-absolute start-50 translate-middle"
                                      style="top: -15px; width: 120px; height: 120px; object-fit: cover; border: 4px solid white; z-index: 10;">
                                 <div class="rounded d-flex flex-column align-items-center justify-content-center position-relative"
                                      style="width: 250px; height: 180px; background: rgba(255, 255, 255, 0.85);
-                                    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); padding-top: 70px; z-index: 1;">
-                                    <p class="text-black fs-5 mb-0">@facility.Name</p>
+                                     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); padding-top: 70px; z-index: 1;">
+                                    <p class="text-black fs-5 mb-0 fw-semibold">@facility.Name</p>
                                 </div>
                             </div>
                         </a>
