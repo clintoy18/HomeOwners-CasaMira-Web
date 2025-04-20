@@ -8,18 +8,14 @@
     /* Main Container */
     .announcements-container {
         position: relative;
-        max-width: 1366px;
+        width: 100%;
         height: 85vh;
         display: flex;
-        border-radius: 10px;
         box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-        padding: 20px;
         overflow: hidden;
-        margin-left: 100px;
-        margin-top: 70px; /* Push content below the navbar */
+        margin-top: 30px;
     }
 
-        /* Semi-transparent background */
         .announcements-container::before {
             content: "";
             position: absolute;
@@ -27,22 +23,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(217, 217, 217, 0.3); /* 30% opacity */
-            z-index: -1; /* Keeps the background behind content */
+            background: rgba(217, 217, 217, 0.3);
+            z-index: -1;
             border-radius: 10px;
         }
-
-
 
     /* Left Column: List of Announcements */
     .announcements-list {
         width: 35%;
-        margin: 30px;
+        height: 100%;
         padding: 30px;
         overflow-y: auto;
         background: #FFFFFF;
-        border-right: 1px solid #ddd;
-      
+        border-right: 2px solid #ddd;
     }
 
     .announcement-item {
@@ -51,15 +44,17 @@
         border-radius: 5px;
         background: #F5F5F5;
         cursor: pointer;
+        transition: background 0.2s ease;
     }
-    .announcement-item:hover {
+
+        .announcement-item:hover {
             background: #E0E0E0;
         }
 
     /* Right Column: Announcement Details */
     .announcement-details {
         width: 65%;
-        padding: 10px;
+        height: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -68,10 +63,12 @@
 
     .details-card {
         width: 100%;
+        height: 100%;
         background: #FFFFFF;
         padding: 20px;
-        justify-content:center;
-        height:90%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
     }
 
@@ -97,12 +94,19 @@
         width: 6px;
     }
 
-    .announcements--color: #aaa;
+    .announcements-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
         border-radius: 5px;
-	}
+    }
 
-	list::-webkit-scrollbar-thumb {
-		background
+    .announcements-list::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+    }
+
+        .announcements-list::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
 </style>
 
 <div class="announcements-container">
@@ -121,10 +125,8 @@
 
     <!-- Right Column: Announcement Details -->
     <div class="announcement-details">
-        <div class="details-card text-center   " id="announcementDetails">
-            <div class="details-card" id="announcementDetails">
+        <div class="details-card" id="announcementDetails">
             <p class="text-muted">Select an announcement to view details.</p>
-            </div>
         </div>
     </div>
 </div>
