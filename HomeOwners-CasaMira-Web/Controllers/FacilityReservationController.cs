@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace HomeOwners_CasaMira_Web.Controllers
 {
-    [Authorize]
+   [Authorize]  
     public class FacilityReservationController : Controller
     {
         private readonly AppDbContext _context;
@@ -91,46 +91,6 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View();
         }
 
-        // GET: FacilityReservationController/Create/FacilityId
-        public IActionResult Create(int? facilityId)
-        {
-            if (facilityId == null)
-            {
-                return NotFound();
-            }
-
-            // Fetch the selected facility
-            var facility = _context.Facilities.FirstOrDefault(f => f.Id == facilityId);
-            if (facility == null)
-            {
-                return NotFound();
-            }
-
-            // Pass the selected facility to the view
-            ViewBag.SelectedFacility = facility;
-            return View();
-        }
-
-        // GET: FacilityReservationController/Create/FacilityId
-        public IActionResult CreateForFacility(int? facilityId)
-        {
-            if (facilityId == null)
-            {
-                return NotFound();
-            }
-
-            // Fetch the selected facility
-            var facility = _context.Facilities.FirstOrDefault(f => f.Id == facilityId);
-            if (facility == null)
-            {
-                return NotFound();
-            }
-
-            // Pass the selected facility to the view
-            ViewBag.SelectedFacility = facility;
-            return View("Create");
-        }
-
         // POST: FacilityReservationController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -139,7 +99,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
             // Set the UserId to the currently logged-in user
             reservation.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             // Set the default status
-            reservation.Status = "Approved";
+            reservation.Status = "Pending";
 
             // Remove UserId and Status from ModelState validation
             ModelState.Remove(nameof(reservation.UserId));
