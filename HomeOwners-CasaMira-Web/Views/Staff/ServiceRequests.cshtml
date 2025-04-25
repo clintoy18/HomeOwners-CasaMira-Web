@@ -2,14 +2,23 @@
 
 @{
     ViewData["Title"] = "Service Requests";
-    Layout = "_LoginPartial";
+    Layout = "_StaffLayout";
 }
 
 <div class="container mt-5">
     <div class="bg-white p-4 rounded shadow">
-        <h1 class="text-center fw-bold text-uppercase text-dark mb-4" style="font-size: 28px; letter-spacing: 0.1em;">
-            Manage Service Requests
-        </h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="fw-bold text-primary mb-0" style="font-size: 28px;">
+                <i class="bi bi-tools me-2"></i> Manage Service Requests
+            </h1>
+            <div>
+                <button type="button" class="btn btn-outline-primary" id="filterBtn">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+            </div>
+        </div>
+        
+        <hr class="mb-4">
 
         @if (TempData["SuccessMessage"] != null)
         {
@@ -27,6 +36,51 @@
             </div>
         }
 
+        <div class="card mb-4 filter-card d-none" id="filterCard">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Request Type</label>
+                            <select class="form-select" id="typeFilter">
+                                <option value="">All Types</option>
+                                <option value="Plumbing">Plumbing</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="HVAC">HVAC</option>
+                                <option value="Landscaping">Landscaping</option>
+                                <option value="Security">Security</option>
+                                <option value="Common Area">Common Area</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Statuses</option>
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Date Range</label>
+                            <div class="d-flex">
+                                <input type="date" class="form-control me-2" id="dateFrom">
+                                <input type="date" class="form-control" id="dateTo">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="applyFilters">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         @if (!Model.Any())
         {
             <div class="alert alert-info">
@@ -35,48 +89,137 @@
         }
         else
         {
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Owner</th>
-                            <th>Type</th>
-                            <th>Location</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.Id</td>
-                                <td>@item.User.FullName</td>
-                                <td>@item.RequestType</td>
-                                <td>@item.Location</td>
-                                <td>@item.CreatedAt.ToString("MM/dd/yyyy")</td>
-                                <td>
-                                    <span class="badge @(item.Status == "Completed" ? "bg-success" : 
-                                                      item.Status == "In Progress" ? "bg-primary" : 
-                                                      item.Status == "Cancelled" ? "bg-danger" : "bg-warning")">
-                                        @item.Status
-                                    </span>
-                                </td>
-                                <td>
-                                    <a asp-action="ServiceRequestDetails" asp-route-id="@item.Id" class="btn btn-sm btn-info">
-                                        <i class="bi bi-info-circle me-1"></i> Details
-                                    </a>
-                                    <a asp-action="UpdateServiceRequest" asp-route-id="@item.Id" class="btn btn-sm btn-primary ms-1">
-                                        <i class="bi bi-pencil me-1"></i> Update
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <div class="card">
+                <div class="card-header bg-light">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>All Requests</h5>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <div class="badge bg-warning me-2">Pending</div>
+                            <div class="badge bg-primary me-2">In Progress</div>
+                            <div class="badge bg-success me-2">Completed</div>
+                            <div class="badge bg-danger">Cancelled</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped m-0" id="requestsTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Owner</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr data-type="@item.RequestType" data-status="@item.Status" data-date="@item.CreatedAt.ToString("yyyy-MM-dd")">
+                                        <td>@item.Id</td>
+                                        <td>@item.User.FullName</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi @GetIconForRequestType(item.RequestType) me-2 text-primary"></i>
+                                                @item.RequestType
+                                            </div>
+                                        </td>
+                                        <td>@item.Location</td>
+                                        <td>@item.CreatedAt.ToString("MM/dd/yyyy")</td>
+                                        <td>
+                                            <span class="badge @(item.Status == "Completed" ? "bg-success" : 
+                                                              item.Status == "In Progress" ? "bg-primary" : 
+                                                              item.Status == "Cancelled" ? "bg-danger" : "bg-warning")">
+                                                @item.Status
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a asp-action="ServiceRequestDetails" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                                                <i class="bi bi-info-circle me-1"></i> Details
+                                            </a>
+                                            <a asp-action="UpdateServiceRequest" asp-route-id="@item.Id" class="btn btn-sm btn-primary ms-1">
+                                                <i class="bi bi-pencil me-1"></i> Update
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         }
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter card toggle
+            const filterBtn = document.getElementById('filterBtn');
+            const filterCard = document.getElementById('filterCard');
+            
+            filterBtn.addEventListener('click', function() {
+                filterCard.classList.toggle('d-none');
+            });
+            
+            // Apply filters
+            const applyFilters = document.getElementById('applyFilters');
+            const typeFilter = document.getElementById('typeFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const dateFrom = document.getElementById('dateFrom');
+            const dateTo = document.getElementById('dateTo');
+            const rows = document.querySelectorAll('#requestsTable tbody tr');
+            
+            applyFilters.addEventListener('click', function() {
+                const type = typeFilter.value;
+                const status = statusFilter.value;
+                const from = dateFrom.value;
+                const to = dateTo.value;
+                
+                rows.forEach(row => {
+                    let showRow = true;
+                    
+                    if (type && row.dataset.type !== type) {
+                        showRow = false;
+                    }
+                    
+                    if (status && row.dataset.status !== status) {
+                        showRow = false;
+                    }
+                    
+                    if (from && row.dataset.date < from) {
+                        showRow = false;
+                    }
+                    
+                    if (to && row.dataset.date > to) {
+                        showRow = false;
+                    }
+                    
+                    row.style.display = showRow ? '' : 'none';
+                });
+            });
+        });
+    </script>
+}
+
+@functions {
+    string GetIconForRequestType(string requestType)
+    {
+        return requestType switch
+        {
+            "Plumbing" => "bi-droplet",
+            "Electrical" => "bi-lightning",
+            "HVAC" => "bi-thermometer-half",
+            "Landscaping" => "bi-tree",
+            "Security" => "bi-shield-lock",
+            "Common Area" => "bi-people",
+            _ => "bi-tools"
+        };
+    }
+} 

@@ -144,7 +144,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                     Location = Location,
                     Description = Description,
                     UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                    Status = "Pending",
+                    Status = "Approved",
                     CreatedAt = DateTime.Now
                 };
 
