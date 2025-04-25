@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HomeOwners_CasaMira_Web.Models
 {
     public class ServiceRequest
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
@@ -16,6 +18,7 @@ namespace HomeOwners_CasaMira_Web.Models
 
         [Required]
         [StringLength(500)]
+        [Display(Name = "Description")]
         public string Description { get; set; }
 
         [Required]
