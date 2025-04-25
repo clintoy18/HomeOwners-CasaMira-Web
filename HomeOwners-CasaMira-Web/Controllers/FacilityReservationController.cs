@@ -5,10 +5,12 @@ using HomeOwners_CasaMira_Web.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
+using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeOwners_CasaMira_Web.Controllers
 {
-   [Authorize]  
+    [Authorize]
     public class FacilityReservationController : Controller
     {
         private readonly AppDbContext _context;
@@ -47,13 +49,14 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
 
         // GET: FacilityReservationController/Calendar
+
         public IActionResult Calendar()
         {
             // Fetch all reservations
             var reservations = _context.FacilityReservations
                 .Select(r => new
                 {
-                    Title = _context.Facilities.FirstOrDefault(f => f.Id == r.FacilityId).Name,
+                    Title = GetFacilityName(r.FacilityId),
                     Start = r.ReservationDate.Add(r.StartTime),
                     End = r.ReservationDate.Add(r.EndTime),
                     Status = r.Status
@@ -66,6 +69,12 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return View();
         }
 
+        private string GetFacilityName(int facilityId)
+        {
+            var facility = _context.Facilities.FirstOrDefault(f => f.Id == facilityId);
+            return facility != null ? facility.Name : "Unknown Facility";
+        }
+
         // GET: FacilityReservationController/Create
         public IActionResult Create()
         {
@@ -73,94 +82,187 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 .Where(f => f.IsAvailable)
                 .ToList();
 
-            if (!availableFacilities.Any())
-            {
-                Console.WriteLine("No available facilities found.");
-            }
-            else
-            {
-                foreach (var facility in availableFacilities)
-                {
-                    Console.WriteLine($"Facility: {facility.Name}, Available: {facility.IsAvailable}");
-                }
-            }
-
             ViewBag.AvailableFacilities = availableFacilities;
 
             return View();
         }
 
+        // GET: FacilityReservationController/Create/FacilityId
+        public IActionResult CreateForFacility(int? facilityId)
+        {
+            Console.WriteLine($"CreateForFacility called with facilityId: {facilityId}");
+            
+            if (facilityId == null || facilityId <= 0)
+            {
+                Console.WriteLine("Invalid facilityId: null or zero/negative");
+                return RedirectToAction("Index");
+            }
+
+            var facility = _context.Facilities.FirstOrDefault(f => f.Id == facilityId);
+            
+            if (facility == null)
+            {
+                Console.WriteLine($"No facility found with ID: {facilityId}");
+                
+                // Debug: List all facilities in database
+                var allFacilities = _context.Facilities.ToList();
+                Console.WriteLine($"Total facilities in database: {allFacilities.Count}");
+                foreach (var f in allFacilities)
+                {
+                    Console.WriteLine($"Available facility: ID={f.Id}, Name={f.Name}");
+                }
+                
+                TempData["ErrorMessage"] = $"Facility with ID {facilityId} not found.";
+                return RedirectToAction("Index");
+            }
+
+            Console.WriteLine($"Found facility: ID={facility.Id}, Name={facility.Name}");
+            
+            // Pass the selected facility to the view
+            ViewBag.SelectedFacility = facility;
+
+            // Get existing reservations for this facility
+            var existingReservations = _context.FacilityReservations
+                .Where(r => r.FacilityId == facilityId && r.ReservationDate.Date >= DateTime.Today)
+                .OrderBy(r => r.ReservationDate)
+                .ThenBy(r => r.StartTime)
+                .Take(5)
+                .ToList();
+
+            if (existingReservations.Any())
+            {
+                ViewBag.ExistingReservations = existingReservations;
+            }
+
+            return View("Create");
+        }
+
         // POST: FacilityReservationController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(FacilityReservation reservation)
+        public async Task<IActionResult> Create(int FacilityId, DateTime ReservationDate, string StartTime, string EndTime)
         {
-            // Set the UserId to the currently logged-in user
-            reservation.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            // Set the default status
-            reservation.Status = "Approved";
-
-            // Remove UserId and Status from ModelState validation
-            ModelState.Remove(nameof(reservation.UserId));
-            ModelState.Remove(nameof(reservation.Status));
-
-            if (ModelState.IsValid)
+            Console.WriteLine($"Create POST called with FacilityId: {FacilityId}");
+            Console.WriteLine($"ReservationDate: {ReservationDate}");
+            Console.WriteLine($"StartTime: {StartTime}");
+            Console.WriteLine($"EndTime: {EndTime}");
+            
+            // Input validation
+            if (string.IsNullOrEmpty(StartTime) || string.IsNullOrEmpty(EndTime))
             {
-                // Check for overlapping reservations for the same facility
-                var overlappingReservation = _context.FacilityReservations
-                    .Where(r => r.FacilityId == reservation.FacilityId &&
-                                r.ReservationDate == reservation.ReservationDate &&
-                                ((reservation.StartTime >= r.StartTime && reservation.StartTime < r.EndTime) || // Overlaps start
-                                 (reservation.EndTime > r.StartTime && reservation.EndTime <= r.EndTime) ||   // Overlaps end
-                                 (reservation.StartTime <= r.StartTime && reservation.EndTime >= r.EndTime))) // Fully overlaps
-                    .FirstOrDefault();
-
-                if (overlappingReservation != null)
-                {
-                    // Add an error message if there is an overlap
-                    ModelState.AddModelError(string.Empty, "The selected time slot is already reserved for this facility.");
-                }
-                else
-                {
-                    // Add the reservation to the database
-                    _context.FacilityReservations.Add(reservation);
-
-                    // Save changes to the database
-                    await _context.SaveChangesAsync();
-
-                    TempData["SuccessMessage"] = "Reservation created successfully!";
-                    return RedirectToAction(nameof(Index));
-                }
+                TempData["ErrorMessage"] = "Please specify both start and end times for your reservation.";
+                return RedirectToCreateWithFacility(FacilityId);
             }
 
-            // Reload available facilities if the model is invalid
-            ViewBag.AvailableFacilities = _context.Facilities
-                .Where(f => f.IsAvailable)
-                .ToList();
+            TimeSpan startTimeSpan, endTimeSpan;
+            try
+            {
+                startTimeSpan = TimeSpan.Parse(StartTime);
+                endTimeSpan = TimeSpan.Parse(EndTime);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Invalid time format. Please use HH:MM format.";
+                return RedirectToCreateWithFacility(FacilityId);
+            }
 
-            return View(reservation);
+            // Check if end time is after start time
+            if (endTimeSpan <= startTimeSpan)
+            {
+                TempData["ErrorMessage"] = "End time must be later than start time.";
+                return RedirectToCreateWithFacility(FacilityId);
+            }
+            
+            // Check if reservation date is in the past
+            if (ReservationDate.Date < DateTime.Today)
+            {
+                TempData["ErrorMessage"] = "Cannot make reservations for past dates.";
+                return RedirectToCreateWithFacility(FacilityId);
+            }
+
+            // Create a new reservation object
+            var reservation = new FacilityReservation
+            {
+                FacilityId = FacilityId,
+                ReservationDate = ReservationDate,
+                StartTime = startTimeSpan,
+                EndTime = endTimeSpan,
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                Status = "Approved"
+            };
+
+            if (FacilityId <= 0)
+            {
+                TempData["ErrorMessage"] = "Please select a facility for your reservation.";
+                return RedirectToAction("Index");
+            }
+
+            var facility = await _context.Facilities.FindAsync(FacilityId);
+            if (facility == null)
+            {
+                TempData["ErrorMessage"] = $"Facility with ID {FacilityId} not found.";
+                return RedirectToAction("Index");
+            }
+
+            // Check for overlapping reservations
+            var overlappingReservation = await _context.FacilityReservations
+                .Where(r => r.FacilityId == reservation.FacilityId &&
+                            r.ReservationDate.Date == reservation.ReservationDate.Date &&
+                            ((reservation.StartTime >= r.StartTime && reservation.StartTime < r.EndTime) ||
+                            (reservation.EndTime > r.StartTime && reservation.EndTime <= r.EndTime) ||
+                            (reservation.StartTime <= r.StartTime && reservation.EndTime >= r.EndTime)))
+                .FirstOrDefaultAsync();
+
+            if (overlappingReservation != null)
+            {
+                var conflictStartTime = overlappingReservation.StartTime.ToString(@"hh\:mm");
+                var conflictEndTime = overlappingReservation.EndTime.ToString(@"hh\:mm");
+                TempData["ErrorMessage"] = $"This time slot is already reserved. There is a booking from {conflictStartTime} to {conflictEndTime} on the selected date.";
+                return RedirectToCreateWithFacility(FacilityId);
+            }
+
+            try
+            {
+                _context.FacilityReservations.Add(reservation);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Reservation created successfully!";
+                return RedirectToAction(nameof(MyReservations));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving reservation: {ex.Message}");
+                TempData["ErrorMessage"] = "An error occurred while creating your reservation.";
+                return RedirectToCreateWithFacility(FacilityId);
+            }
         }
-        // GET: FacilityReservationController/CreateForFacility?facilityId=1040
-    public IActionResult CreateForFacility(int facilityId)
-    {
-        var facility = _context.Facilities.FirstOrDefault(f => f.Id == facilityId && f.IsAvailable);
 
-        if (facility == null)
+        private IActionResult RedirectToCreateWithFacility(int facilityId)
         {
-            return NotFound("Facility not found or not available.");
+            var facility = _context.Facilities.FirstOrDefault(f => f.Id == facilityId);
+            if (facility != null)
+            {
+                ViewBag.SelectedFacility = facility;
+                
+                // Get existing reservations for this facility
+                var existingReservations = _context.FacilityReservations
+                    .Where(r => r.FacilityId == facilityId && r.ReservationDate.Date >= DateTime.Today)
+                    .OrderBy(r => r.ReservationDate)
+                    .ThenBy(r => r.StartTime)
+                    .Take(5)
+                    .ToList();
+
+                if (existingReservations.Any())
+                {
+                    ViewBag.ExistingReservations = existingReservations;
+                }
+                
+                return View("Create");
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
-
-        // Optional: create a reservation model pre-filled with the facility ID
-        var reservation = new FacilityReservation
-        {
-            FacilityId = facilityId
-        };
-
-        ViewBag.SelectedFacility = facility;
-
-        return View("Create", reservation); // Reuse the Create view
-    }
-
 
         // GET: FacilityReservationController/Details/5
         public IActionResult Details(int id)

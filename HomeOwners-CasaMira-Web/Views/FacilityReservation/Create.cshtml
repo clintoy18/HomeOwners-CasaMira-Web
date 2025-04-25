@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Create Reservation";
     var selectedFacility = ViewBag.SelectedFacility as HomeOwners_CasaMira_Web.Models.Facility;
+    var existingReservations = ViewBag.ExistingReservations as List<HomeOwners_CasaMira_Web.Models.FacilityReservation>;
 }
 
 <div class="container mt-5">
@@ -11,34 +12,92 @@
             Create Reservation
         </h2>
 
-        <form asp-action="Create" method="post">
-            @Html.AntiForgeryToken()
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">Facility</label>
-                <input type="text" class="form-control" value="@selectedFacility.Name" readonly />
-                <input type="hidden" asp-for="FacilityId" value="@selectedFacility.Id" />
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <div asp-validation-summary="All" class="text-danger"></div>
             </div>
+        }
 
-            <div class="mb-4">
-                <label asp-for="ReservationDate" class="form-label fw-bold">Reservation Date</label>
-                <input asp-for="ReservationDate" class="form-control" type="date" required />
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
             </div>
+        }
 
-            <div class="mb-4">
-                <label asp-for="StartTime" class="form-label fw-bold">Start Time</label>
-                <input asp-for="StartTime" class="form-control" type="time" required />
+        @if (selectedFacility == null)
+        {
+            <div class="alert alert-danger">
+                No facility selected. Please select a facility first.
             </div>
+            <a asp-action="Index" asp-controller="FacilityReservation" class="btn btn-primary">Go back to Facility List</a>
+        }
+        else
+        {
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <form method="post" action="/FacilityReservation/Create">
+                        @Html.AntiForgeryToken()
 
-            <div class="mb-4">
-                <label asp-for="EndTime" class="form-label fw-bold">End Time</label>
-                <input asp-for="EndTime" class="form-control" type="time" required />
-            </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Facility</label>
+                            <input type="text" class="form-control" value="@selectedFacility.Name" readonly />
+                            <input type="hidden" name="FacilityId" id="FacilityId" value="@selectedFacility.Id" />
+                        </div>
 
-            <div class="text-center d-flex justify-content-center gap-3">
-                <button type="submit" class="btn btn-primary btn-lg px-5">Submit</button>
-                <a asp-action="Index" class="btn btn-secondary btn-lg px-5">Cancel</a>
+                        <div class="mb-4">
+                            <label for="ReservationDate" class="form-label fw-bold">Reservation Date</label>
+                            <input name="ReservationDate" id="ReservationDate" class="form-control" type="date" value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="StartTime" class="form-label fw-bold">Start Time</label>
+                            <input name="StartTime" id="StartTime" class="form-control" type="time" value="09:00" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="EndTime" class="form-label fw-bold">End Time</label>
+                            <input name="EndTime" id="EndTime" class="form-control" type="time" value="10:00" required />
+                        </div>
+
+                        <div class="alert alert-info">
+                            <strong>Note:</strong> Please check existing reservations to avoid conflicts.
+                        </div>
+
+                        <div class="text-center d-flex justify-content-center gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">Submit</button>
+                            <a href="/FacilityReservation/Index" class="btn btn-secondary btn-lg px-5">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Existing Reservations</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (existingReservations != null && existingReservations.Any())
+                            {
+                                <ul class="list-group">
+                                    @foreach (var res in existingReservations)
+                                    {
+                                        <li class="list-group-item">
+                                            <strong>@res.ReservationDate.ToString("MMM dd, yyyy")</strong><br>
+                                            <span class="text-muted">@res.StartTime.ToString(@"hh\:mm") - @res.EndTime.ToString(@"hh\:mm")</span>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="text-center">No existing reservations for this facility.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
+        }
     </div>
 </div>
