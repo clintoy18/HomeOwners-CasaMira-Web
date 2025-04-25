@@ -4,6 +4,8 @@
     ViewData["Title"] = "Submit Service Request";
     var selectedRequestType = ViewBag.SelectedRequestType as string;
     var recentRequests = ViewBag.RecentRequests as List<HomeOwners_CasaMira_Web.Models.ServiceRequest>;
+    
+    Layout = "_UserLayout";
 }
 
 <div class="container mt-5">
