@@ -78,7 +78,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
+
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
