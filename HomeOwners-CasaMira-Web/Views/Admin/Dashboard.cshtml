@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Admin Dashboard";
-    Layout = "_AdminLayout"; // Uses Admin Layout
+    Layout = "_AdminLayout";
 }
 
 <div class="container mt-4">
@@ -43,19 +43,39 @@
             </div>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <!-- Reserved Facilities Report -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h4 class="mb-3">🏠 Reserved Facilities Report</h4>
+                <div style="height: 350px;">
+                    <canvas id="reservedFacilitiesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Facilities Count Report -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h4 class="mb-3">📌 Facility Count</h4>
+                <p class="fs-4">Total Facilities: <strong>@ViewBag.TotalFacilities</strong></p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Replace this with actual data from your backend
+        // User statistics
         const userData = {
             Homeowner: 120,
             Staff: 30
         };
 
-        const ctx = document.getElementById("userChart").getContext("2d");
-        new Chart(ctx, {
+        const ctxUser = document.getElementById("userChart").getContext("2d");
+        new Chart(ctxUser, {
             type: "pie",
             data: {
                 labels: Object.keys(userData),
@@ -70,6 +90,31 @@
                 plugins: {
                     legend: {
                         position: "bottom"
+                    }
+                }
+            }
+        });
+
+        // Reserved Facilities Chart
+        const reservedData = @Html.Raw(Json.Serialize(ViewBag.ReservedFacilities));
+        const ctxReserved = document.getElementById("reservedFacilitiesChart").getContext("2d");
+
+        new Chart(ctxReserved, {
+            type: "bar",
+            data: {
+                labels: reservedData.map(x => x.FacilityName),
+                datasets: [{
+                    label: "Number of Reservations",
+                    data: reservedData.map(x => x.ReservationCount),
+                    backgroundColor: "#007BFF"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
             }

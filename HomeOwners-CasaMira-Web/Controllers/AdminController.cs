@@ -19,6 +19,23 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
         public IActionResult Dashboard()
         {
+            // Total number of facilities
+            var totalFacilities = _context.Facilities.Count();
+
+            // Group facility reservations by facility name
+            var reservedFacilities = _context.FacilityReservations
+                .GroupBy(fr => fr.Facility.Name)
+                .Select(g => new
+                {
+                    FacilityName = g.Key,
+                    ReservationCount = g.Count()
+                })
+                .ToList();
+
+            // Pass to view
+            ViewBag.TotalFacilities = totalFacilities;
+            ViewBag.ReservedFacilities = reservedFacilities;
+
             return View();
         }
 

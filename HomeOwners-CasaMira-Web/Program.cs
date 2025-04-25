@@ -41,6 +41,56 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+
+    // Get the RoleManager from the DI container
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = serviceProvider.GetRequiredService<UserManager<Users>>();
+
+
+    // List of roles to check and create
+    var roles = new[] { "Admin", "Homeowner", "Staff" };
+
+    foreach (var role in roles)
+    {
+        var roleExist = await roleManager.RoleExistsAsync(role);
+
+        if (!roleExist)
+        {
+            // Create each role if it does not exist
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    // Seed Admin user
+    var adminEmail = "admin@casamira.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new Users
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FullName = "Admin User",
+            Address = "123 Admin St",
+            DateOfBirth = new DateTime(1990, 1, 1),
+            EmailConfirmed = true,
+            Role = "Admin" // Set the role manually
+        };
+
+        var result = await userManager.CreateAsync(adminUser, "AdminPassword123!");
+        if (result.Succeeded)
+        {
+            // Assign the role manually (if you're storing the role in the Role column)
+            adminUser.Role = "Admin";
+            await userManager.UpdateAsync(adminUser);
+        }
+    }
+}
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
