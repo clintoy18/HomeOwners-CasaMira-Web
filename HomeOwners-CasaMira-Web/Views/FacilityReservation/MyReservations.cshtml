@@ -12,6 +12,23 @@
             My Reservations
         </h1>
 
+        <!-- Display messages -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
         @if (!Model.Any())
         {
             <p class="text-center text-muted fs-5">You have no reservations yet.</p>
@@ -27,6 +44,7 @@
                         <th>Start Time</th>
                         <th>End Time</th>
                         <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,14 +57,29 @@
                             <td>@reservation.StartTime.ToString(@"hh\:mm")</td>
                             <td>@reservation.EndTime.ToString(@"hh\:mm")</td>
                             <td>
-                                <span class="badge @(reservation.Status == "Approved" ? "bg-success" : "bg-warning")">
+                                <span class="badge @(reservation.Status == "Approved" ? "bg-success" : 
+                                                 reservation.Status == "Cancelled" ? "bg-danger" : "bg-warning")">
                                     @reservation.Status
                                 </span>
+                            </td>
+                            <td>
+                                @{
+                                    var reservationDateTime = reservation.ReservationDate.Add(reservation.StartTime);
+                                    var canCancel = reservationDateTime > DateTime.Now && reservation.Status != "Cancelled";
+                                }
+                                @if (canCancel)
+                                {
+                                    <a asp-action="Cancel" asp-route-id="@reservation.Id" class="btn btn-sm btn-danger">Cancel</a>
+                                }
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
         }
+        
+        <div class="text-center mt-4">
+            <a asp-action="Index" class="btn btn-primary">Make New Reservation</a>
+        </div>
     </div>
 </div>

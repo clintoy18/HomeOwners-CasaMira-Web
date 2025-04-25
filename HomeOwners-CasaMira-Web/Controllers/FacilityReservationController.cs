@@ -299,5 +299,104 @@ namespace HomeOwners_CasaMira_Web.Controllers
             // Placeholder for reservation deletion logic (removed).
             return RedirectToAction(nameof(Index));
         }
+
+        // GET: FacilityReservationController/Cancel/5
+        public async Task<IActionResult> Cancel(int id)
+        {
+            if (id <= 0)
+            {
+                TempData["ErrorMessage"] = "Invalid reservation ID.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var reservation = await _context.FacilityReservations
+                .Include(r => r.Facility)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (reservation == null)
+            {
+                TempData["ErrorMessage"] = "Reservation not found.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+
+            // Check if the reservation belongs to the current user
+            if (reservation.UserId != userId)
+            {
+                TempData["ErrorMessage"] = "You can only cancel your own reservations.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+
+            // Check if the reservation is in the future (can't cancel past reservations)
+            var reservationDateTime = reservation.ReservationDate.Add(reservation.StartTime);
+            if (reservationDateTime < DateTime.Now)
+            {
+                TempData["ErrorMessage"] = "Cannot cancel past reservations.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+
+            // Check if the reservation is already cancelled
+            if (reservation.Status == "Cancelled")
+            {
+                TempData["ErrorMessage"] = "This reservation is already cancelled.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+
+            return View(reservation);
+        }
+
+        // POST: FacilityReservationController/Cancel/5
+        [HttpPost, ActionName("Cancel")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelConfirmed(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var reservation = await _context.FacilityReservations
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (reservation == null)
+            {
+                TempData["ErrorMessage"] = "Reservation not found.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+
+            // Verify user owns this reservation
+            if (reservation.UserId != userId)
+            {
+                TempData["ErrorMessage"] = "You can only cancel your own reservations.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+
+            // Check cancellation time policy
+            var reservationDateTime = reservation.ReservationDate.Add(reservation.StartTime);
+            if (reservationDateTime < DateTime.Now)
+            {
+                TempData["ErrorMessage"] = "Cannot cancel past reservations.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+
+            // Check if cancellation is within policy timeframe (e.g., at least 24 hours before)
+            TimeSpan cancelWindow = TimeSpan.FromHours(24);
+            if (reservationDateTime - DateTime.Now < cancelWindow)
+            {
+                TempData["ErrorMessage"] = "Reservations must be cancelled at least 24 hours in advance.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+
+            try
+            {
+                // Update status to Cancelled
+                reservation.Status = "Cancelled";
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Reservation cancelled successfully.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error cancelling reservation: {ex.Message}");
+                TempData["ErrorMessage"] = "An error occurred while cancelling your reservation.";
+                return RedirectToAction(nameof(MyReservations));
+            }
+        }
     }
 }
