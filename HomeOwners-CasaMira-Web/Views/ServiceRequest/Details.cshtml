@@ -51,14 +51,18 @@
                 </div>
                 
                 <div class="d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">
+                    <a asp-action="MyRequests" class="btn btn-secondary">
                         <i class="bi bi-arrow-left me-1"></i> Back to List
                     </a>
                     @if (Model.Status == "Pending")
                     {
-                        <a asp-action="Cancel" asp-route-id="@Model.Id" class="btn btn-danger">
-                            <i class="bi bi-x-circle me-1"></i> Cancel Request
-                        </a>
+                        <form asp-action="Cancel" asp-route-id="@Model.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger" 
+                                    onclick="return confirm('Are you sure you want to cancel this request?');">
+                                <i class="bi bi-x-circle me-1"></i> Cancel Request
+                            </button>
+                        </form>
                     }
                 </div>
             </div>

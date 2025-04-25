@@ -2,53 +2,97 @@
 
 @{
     ViewData["Title"] = "Submit Service Request";
-    var requestTypes = ViewBag.RequestTypes as List<string>;
+    var selectedRequestType = ViewBag.SelectedRequestType as string;
+    var recentRequests = ViewBag.RecentRequests as List<HomeOwners_CasaMira_Web.Models.ServiceRequest>;
 }
 
 <div class="container mt-5">
     <div class="bg-white p-4 rounded shadow">
         <h1 class="text-center fw-bold text-uppercase text-dark mb-4" style="font-size: 28px; letter-spacing: 0.1em;">
-            Submit Service Request
+            Submit @selectedRequestType Request
         </h1>
 
-        <div class="row justify-content-center">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show mb-4">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="row mb-4">
             <div class="col-md-8">
-                <form asp-action="Create" method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-                    
-                    <div class="mb-3">
-                        <label asp-for="RequestType" class="form-label">Request Type</label>
-                        <select asp-for="RequestType" class="form-select">
-                            <option value="">-- Select Request Type --</option>
-                            @foreach (var type in requestTypes)
-                            {
-                                <option value="@type">@type</option>
-                            }
-                        </select>
-                        <span asp-validation-for="RequestType" class="text-danger"></span>
+                <form method="post" action="/ServiceRequest/Create">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Request Type</label>
+                        <input type="text" class="form-control" value="@selectedRequestType" readonly />
+                        <input type="hidden" name="RequestType" id="RequestType" value="@selectedRequestType" />
                     </div>
                     
-                    <div class="mb-3">
-                        <label asp-for="Location" class="form-label">Location</label>
-                        <input asp-for="Location" class="form-control" placeholder="e.g., Master Bathroom, Kitchen, etc." />
-                        <span asp-validation-for="Location" class="text-danger"></span>
+                    <div class="mb-4">
+                        <label for="Location" class="form-label fw-bold">Location *</label>
+                        <input type="text" class="form-control" id="Location" name="Location" 
+                               placeholder="e.g., Unit 101, Master Bathroom, Lobby" required />
+                        <div class="form-text">Specify where in the property the issue is located</div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label">Description</label>
-                        <textarea asp-for="Description" class="form-control" rows="5" placeholder="Please provide a detailed description of the issue..."></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
+                    <div class="mb-4">
+                        <label for="Description" class="form-label fw-bold">Description *</label>
+                        <textarea class="form-control" id="Description" name="Description" 
+                                 rows="5" placeholder="Please provide detailed information about the issue..." required></textarea>
                     </div>
-                    
+
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a asp-action="Index" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        <a href="@Url.Action("Index", "ServiceRequest")" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-send me-1"></i> Submit
+                            <i class="bi bi-send me-1"></i> Submit Request
                         </button>
                     </div>
                 </form>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">For a quicker resolution of your @selectedRequestType request:</p>
+                        <ul>
+                            <li>Be specific about the location</li>
+                            <li>Describe when the issue started</li>
+                            <li>Mention any troubleshooting steps you've already tried</li>
+                            <li>If applicable, include the severity of the issue</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                @if (recentRequests != null && recentRequests.Any())
+                {
+                    <div class="card mt-3">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Similar Requests</h5>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var request in recentRequests)
+                            {
+                                <li class="list-group-item">
+                                    <small class="text-muted">@request.CreatedAt.ToString("MM/dd/yyyy")</small>
+                                    <p class="mb-0 text-truncate">@request.Location</p>
+                                    <span class="badge @(request.Status == "Completed" ? "bg-success" : 
+                                                      request.Status == "In Progress" ? "bg-primary" : 
+                                                      request.Status == "Cancelled" ? "bg-danger" : "bg-warning")">
+                                        @request.Status
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
             </div>
         </div>
     </div>

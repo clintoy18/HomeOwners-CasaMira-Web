@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using System;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace HomeOwners_CasaMira_Web.Controllers
 {
@@ -21,73 +22,157 @@ namespace HomeOwners_CasaMira_Web.Controllers
         }
 
         // GET: ServiceRequest
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var requests = await _context.ServiceRequests
-                .Where(sr => sr.UserId == userId)
-                .OrderByDescending(sr => sr.CreatedAt)
-                .ToListAsync();
-
-            return View(requests);
-        }
-
-        // GET: ServiceRequest/Create
-        public IActionResult Create()
-        {
-            // Define the list of request types
-            ViewBag.RequestTypes = new List<string> 
-            { 
-                "Plumbing", 
-                "Electrical", 
-                "HVAC", 
-                "Landscaping", 
-                "Security", 
-                "Common Area", 
-                "Other" 
+            // Define the list of request types for selection
+            var requestTypes = new List<string>
+            {
+                "Plumbing",
+                "Electrical",
+                "HVAC",
+                "Landscaping",
+                "Security",
+                "Common Area",
+                "Other"
             };
+
+            // Pass the request types to the view
+            ViewBag.RequestTypes = requestTypes;
             
             return View();
+        }
+
+        // GET: ServiceRequest/MyRequests
+        public async Task<IActionResult> MyRequests()
+        {
+            try
+            {
+                // Get the logged-in user's ID
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                // Fetch requests for the logged-in user
+                var requests = await _context.ServiceRequests
+                    .Where(sr => sr.UserId == userId)
+                    .OrderByDescending(sr => sr.CreatedAt)
+                    .ToListAsync();
+
+                return View(requests);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in MyRequests: {ex.Message}");
+                TempData["ErrorMessage"] = $"Error retrieving service requests: {ex.Message}";
+                return View(new List<ServiceRequest>());
+            }
+        }
+
+        // GET: ServiceRequest/CreateForType/RequestType
+        public IActionResult CreateForType(string requestType)
+        {
+            if (string.IsNullOrEmpty(requestType))
+            {
+                TempData["ErrorMessage"] = "Please select a request type.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Define the list of request types (for validation)
+            var validRequestTypes = new List<string>
+            {
+                "Plumbing",
+                "Electrical",
+                "HVAC",
+                "Landscaping",
+                "Security",
+                "Common Area",
+                "Other"
+            };
+
+            if (!validRequestTypes.Contains(requestType))
+            {
+                TempData["ErrorMessage"] = "Invalid request type selected.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Set the selected request type in the ViewBag
+            ViewBag.SelectedRequestType = requestType;
+            
+            // Get recent similar requests (for reference)
+            var recentRequests = _context.ServiceRequests
+                .Where(sr => sr.RequestType == requestType)
+                .OrderByDescending(sr => sr.CreatedAt)
+                .Take(3)
+                .ToList();
+                
+            if (recentRequests.Any())
+            {
+                ViewBag.RecentRequests = recentRequests;
+            }
+
+            return View("Create");
         }
 
         // POST: ServiceRequest/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RequestType,Description,Location")] ServiceRequest serviceRequest)
+        public async Task<IActionResult> Create(string RequestType, string Location, string Description)
         {
-            if (ModelState.IsValid)
+            try
             {
-                // Set the current user as the request owner
-                serviceRequest.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                serviceRequest.Status = "Pending";
-                serviceRequest.CreatedAt = DateTime.Now;
+                // Input validation
+                if (string.IsNullOrEmpty(RequestType))
+                {
+                    TempData["ErrorMessage"] = "Please specify the request type.";
+                    return RedirectToCreateWithType(RequestType);
+                }
+
+                if (string.IsNullOrEmpty(Location))
+                {
+                    TempData["ErrorMessage"] = "Please specify the location.";
+                    return RedirectToCreateWithType(RequestType);
+                }
+
+                if (string.IsNullOrEmpty(Description))
+                {
+                    TempData["ErrorMessage"] = "Please provide a description of the issue.";
+                    return RedirectToCreateWithType(RequestType);
+                }
+
+                // Create a new service request object
+                var serviceRequest = new ServiceRequest
+                {
+                    RequestType = RequestType,
+                    Location = Location,
+                    Description = Description,
+                    UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    Status = "Pending",
+                    CreatedAt = DateTime.Now
+                };
 
                 try
                 {
-                    _context.Add(serviceRequest);
+                    _context.ServiceRequests.Add(serviceRequest);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Service request submitted successfully!";
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(MyRequests));
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                    Console.WriteLine($"Error saving service request: {ex.Message}");
+                    TempData["ErrorMessage"] = "An error occurred while creating your service request.";
+                    return RedirectToCreateWithType(RequestType);
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in Create POST: {ex.Message}");
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
 
-            // If we got to here, something failed, redisplay form
-            ViewBag.RequestTypes = new List<string> 
-            { 
-                "Plumbing", 
-                "Electrical", 
-                "HVAC", 
-                "Landscaping", 
-                "Security", 
-                "Common Area", 
-                "Other" 
-            };
-            
-            return View(serviceRequest);
+        private IActionResult RedirectToCreateWithType(string requestType)
+        {
+            return RedirectToAction(nameof(CreateForType), new { requestType = requestType });
         }
 
         // GET: ServiceRequest/Details/5
@@ -104,7 +189,8 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 
             if (serviceRequest == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Service request not found.";
+                return RedirectToAction(nameof(MyRequests));
             }
 
             return View(serviceRequest);
@@ -122,14 +208,14 @@ namespace HomeOwners_CasaMira_Web.Controllers
             if (serviceRequest == null)
             {
                 TempData["ErrorMessage"] = "Service request not found.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyRequests));
             }
 
             // Only allow cancellation of pending requests
             if (serviceRequest.Status != "Pending")
             {
                 TempData["ErrorMessage"] = "Only pending requests can be cancelled.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyRequests));
             }
 
             try
@@ -145,7 +231,7 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 TempData["ErrorMessage"] = $"An error occurred while cancelling the request: {ex.Message}";
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MyRequests));
         }
     }
 } 
