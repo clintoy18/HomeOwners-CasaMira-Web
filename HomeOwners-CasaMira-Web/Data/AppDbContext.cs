@@ -41,9 +41,6 @@ namespace HomeOwners_CasaMira_Web.Data
                 .HasDefaultValue("Pending");
         }
 
-        public static implicit operator AppDbContext(AppbContext v)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

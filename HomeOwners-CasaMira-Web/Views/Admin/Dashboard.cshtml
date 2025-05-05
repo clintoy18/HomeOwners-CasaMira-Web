@@ -3,72 +3,169 @@
     Layout = "_AdminLayout";
 }
 
-<div class="container mt-4">
-    <h2 class="text-center mb-4 text-white"> Admin Dashboard</h2>
+<style>
+    .dashboard-wrapper {
+        background-color: rgba(255, 255, 255, 0.85); /* increased opacity */
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .card {
+        border: 1px solid #dee2e6 !important; /* subtle border around cards */
+    }
+
+    .card h4 {
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .table {
+        border: 1px solid #dee2e6;
+    }
+
+    .table thead {
+        background-color: #f8f9fa;
+    }
+
+    .card + .card {
+        margin-top: 20px;
+    }
+</style>
+
+
+
+<div class="dashboard-wrapper p-4 rounded">
+
+<div class="container mt-3">
+    <h2 class="text-center text-black mb-4">Admin Dashboard</h2>
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
     }
 
     <div class="row">
-        <!-- Left Column: Announcement Form -->
-        <div class="col-md-6">
-            <div class="card shadow-sm p-4">
-                <h4 class="mb-3">Post Announcement</h4>
-
+        <!-- Post Announcement -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-0 p-4">
+                <h4 class="mb-3">📢 Post Announcement</h4>
                 <form asp-controller="Admin" asp-action="CreateAnnouncement" method="post">
                     @Html.AntiForgeryToken()
 
                     <div class="mb-3">
-                        <label class="form-label">Announcement Title</label>
+                        <label class="form-label">Title</label>
                         <input type="text" class="form-control" name="Title" required>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Content</label>
                         <textarea class="form-control" name="Content" rows="3" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100"> Post Announcement</button>
+
+                    <button type="submit" class="btn btn-primary w-100">Post</button>
                 </form>
             </div>
         </div>
 
-        <!-- Right Column: User Statistics Chart -->
-        <div class="col-md-6">
-            <div class="card shadow-sm p-4">
+        <!-- User Statistics -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-0 p-4">
                 <h4 class="mb-3">📊 User Statistics</h4>
-                <div style="height: 350px;">
+                <div style="height: 300px;">
                     <canvas id="userChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-4">
-        <!-- Reserved Facilities Report -->
-        <div class="col-md-6">
-            <div class="card shadow-sm p-4">
+    <!-- Upload Document Section -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card shadow border-0 p-4">
+                <h4 class="mb-3">📂 Upload Document</h4>
+                <form asp-action="UploadDocument" asp-controller="Admin" method="post" enctype="multipart/form-data">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="Title" class="form-control" required />
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Choose File</label>
+                            <input type="file" name="DocumentFile" class="form-control" required />
+                        </div>
+                        <div class="col-md-3 d-grid">
+                            <label class="invisible d-block">Upload</label>
+                            <button type="submit" class="btn btn-success">Upload</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uploaded Documents List -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card shadow border-0 p-4">
+                <h4 class="mb-3">📁 Uploaded Documents</h4>
+                @if (ViewBag.Documents != null && (ViewBag.Documents as List<HomeOwners_CasaMira_Web.Models.Document>).Any())
+                {
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Uploaded At</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var doc in ViewBag.Documents as List<HomeOwners_CasaMira_Web.Models.Document>)
+                            {
+                                <tr>
+                                    <td>@doc.Title</td>
+                                    <td>@doc.UploadedAt.ToShortDateString()</td>
+                                    <td>
+                                        <a href="@doc.FilePath" class="btn btn-sm btn-primary" target="_blank">View</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted">No documents uploaded yet.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow border-0 p-4">
                 <h4 class="mb-3">🏠 Reserved Facilities Report</h4>
-                <div style="height: 350px;">
+                <div style="height: 300px;">
                     <canvas id="reservedFacilitiesChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Facilities Count Report -->
-        <div class="col-md-6">
-            <div class="card shadow-sm p-4">
-                <h4 class="mb-3">📌 Facility Count</h4>
-                <p class="fs-4">Total Facilities: <strong>@ViewBag.TotalFacilities</strong></p>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow border-0 p-4 text-center">
+                <h4 class="mb-3">📌 Total Facilities</h4>
+                <p class="fs-1 fw-bold text-primary">@ViewBag.TotalFacilities</p>
             </div>
         </div>
     </div>
 </div>
+</div>
 
+<!-- Chart.js Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // User statistics
         const userData = {
             Homeowner: 120,
             Staff: 30
@@ -86,16 +183,12 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: "bottom"
-                    }
+                    legend: { position: "bottom" }
                 }
             }
         });
 
-        // Reserved Facilities Chart
         const reservedData = @Html.Raw(Json.Serialize(ViewBag.ReservedFacilities));
         const ctxReserved = document.getElementById("reservedFacilitiesChart").getContext("2d");
 
@@ -111,11 +204,8 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
                 scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                    y: { beginAtZero: true }
                 }
             }
         });

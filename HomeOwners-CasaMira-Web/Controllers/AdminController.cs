@@ -32,9 +32,14 @@ namespace HomeOwners_CasaMira_Web.Controllers
                 })
                 .ToList();
 
+            var documents = _context.Documents
+                .OrderByDescending(d => d.UploadedAt)
+                .ToList();
+
             // Pass to view
             ViewBag.TotalFacilities = totalFacilities;
             ViewBag.ReservedFacilities = reservedFacilities;
+            ViewBag.Documents = documents; // <- AND THIS LINE
 
             return View();
         }
@@ -57,5 +62,48 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
             return View("Dashboard", model);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadDocument(string Title, IFormFile DocumentFile)
+        {
+            if (DocumentFile == null || DocumentFile.Length == 0 || string.IsNullOrWhiteSpace(Title))
+            {
+                TempData["ErrorMessage"] = "Please provide a title and select a document to upload.";
+                return RedirectToAction("Dashboard");
+            }
+
+            // Ensure the wwwroot/uploads directory exists
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            // Generate unique file name
+            var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(DocumentFile.FileName)}";
+            var fullPath = Path.Combine(uploadPath, uniqueFileName);
+
+            // Save the file
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await DocumentFile.CopyToAsync(stream);
+            }
+
+            // Save document info to the database
+            var document = new Document
+            {
+                Title = Title,
+                FilePath = "/uploads/" + uniqueFileName,
+                UploadedAt = DateTime.UtcNow
+            };
+
+            _context.Add(document);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Document uploaded successfully!";
+            return RedirectToAction("Dashboard");
+        }
+
     }
 }

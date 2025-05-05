@@ -1,0 +1,45 @@
+@model List<HomeOwners_CasaMira_Web.Models.Document>
+@{
+    ViewData["Title"] = "Documents";
+    Layout = "_UserLayout"; // Use your general layout
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📁 Available Documents</h2>
+
+      <!-- Uploaded Documents List -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card shadow border-0 p-4">
+                <h4 class="mb-3">📁 Uploaded Documents</h4>
+                @if (ViewBag.Documents != null && (ViewBag.Documents as List<HomeOwners_CasaMira_Web.Models.Document>).Any())
+                {
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Uploaded At</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var doc in ViewBag.Documents as List<HomeOwners_CasaMira_Web.Models.Document>)
+                            {
+                                <tr>
+                                    <td>@doc.Title</td>
+                                    <td>@doc.UploadedAt.ToShortDateString()</td>
+                                    <td>
+                                        <a href="@doc.FilePath" class="btn btn-sm btn-primary" target="_blank">View</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted">No documents uploaded yet.</p>
+                }
+            </div>
+        </div>
+</div>
