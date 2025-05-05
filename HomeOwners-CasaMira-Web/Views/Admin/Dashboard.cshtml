@@ -127,11 +127,17 @@
                                     <td>@doc.UploadedAt.ToShortDateString()</td>
                                     <td>
                                         <a href="@doc.FilePath" class="btn btn-sm btn-primary" target="_blank">View</a>
+                                        <form asp-action="DeleteDocument" asp-controller="Admin" method="post" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@doc.Id" />
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
+
                 }
                 else
                 {

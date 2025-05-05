@@ -105,5 +105,35 @@ namespace HomeOwners_CasaMira_Web.Controllers
             return RedirectToAction("Dashboard");
         }
 
+        
+            // Action to delete a document
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public async Task<IActionResult> DeleteDocument(int id)
+            {
+                var document = await _context.Documents.FindAsync(id);
+                if (document != null)
+                {
+                    // Optionally, delete the physical file from storage if needed
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", document.FilePath);
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+
+                    _context.Documents.Remove(document);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Document deleted successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Document not found.";
+                }
+
+                return RedirectToAction("Dashboard"); // Redirect to the Admin Dashboard or appropriate view
+            }
+
+
     }
 }
