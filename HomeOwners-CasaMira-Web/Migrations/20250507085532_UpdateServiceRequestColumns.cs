@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,11 +6,20 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HomeOwners_CasaMira_Web.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateServiceRequestModel : Migration
+    public partial class UpdateServiceRequestColumns : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<string>(
+                name: "Status",
+                table: "ServiceRequests",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "Pending",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
             migrationBuilder.AddColumn<string>(
                 name: "Description",
                 table: "ServiceRequests",
@@ -59,6 +68,15 @@ namespace HomeOwners_CasaMira_Web.Migrations
             migrationBuilder.DropColumn(
                 name: "UpdatedAt",
                 table: "ServiceRequests");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Status",
+                table: "ServiceRequests",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldDefaultValue: "Pending");
         }
     }
-} 
+}
