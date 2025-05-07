@@ -14,6 +14,8 @@ namespace HomeOwners_CasaMira_Web.Data
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<Facility> Facilities { get; set; }
+        public DbSet<ForumPost> ForumPosts { get; set; }
+        public DbSet<ForumComment> ForumComments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,8 +41,35 @@ namespace HomeOwners_CasaMira_Web.Data
                 .Property(s => s.Status)
                 .IsRequired()
                 .HasDefaultValue("Pending");
-        }
 
-        
+            // Configure ForumPost entity
+            modelBuilder.Entity<ForumPost>()
+                .Property(f => f.Title)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            modelBuilder.Entity<ForumPost>()
+                .Property(f => f.Content)
+                .IsRequired();
+
+            // Configure relationships
+            modelBuilder.Entity<ForumPost>()
+                .HasMany(p => p.Comments)
+                .WithOne(c => c.ForumPost)
+                .HasForeignKey(c => c.ForumPostId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ForumComment>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ForumPost>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
     }
 }
