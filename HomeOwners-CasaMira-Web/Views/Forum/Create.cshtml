@@ -8,29 +8,42 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="mb-0">Create New Post</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Back to Forum</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create New Post</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h4 mb-0">Create New Post</h2>
                 </div>
                 <div class="card-body">
                     <form asp-action="Create">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                         
-                        <div class="form-group mb-3">
-                            <label asp-for="Title" class="control-label"></label>
-                            <input asp-for="Title" class="form-control" />
+                        <div class="form-group mb-4">
+                            <label asp-for="Title" class="form-label fw-bold"></label>
+                            <input asp-for="Title" class="form-control form-control-lg" placeholder="Enter a clear and descriptive title" />
                             <span asp-validation-for="Title" class="text-danger"></span>
+                            <small class="form-text text-muted">Keep your title concise but informative (max 200 characters)</small>
                         </div>
                         
-                        <div class="form-group mb-3">
-                            <label asp-for="Content" class="control-label"></label>
-                            <textarea asp-for="Content" class="form-control" rows="6"></textarea>
+                        <div class="form-group mb-4">
+                            <label asp-for="Content" class="form-label fw-bold"></label>
+                            <textarea asp-for="Content" class="form-control" rows="8" placeholder="Write your post content here..."></textarea>
                             <span asp-validation-for="Content" class="text-danger"></span>
+                            <small class="form-text text-muted">Be clear and respectful in your communication</small>
                         </div>
                         
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Create Post</button>
-                            <a asp-action="Index" class="btn btn-secondary">Back to Forum</a>
+                        <div class="form-group d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send"></i> Create Post
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
                         </div>
                     </form>
                 </div>
@@ -41,4 +54,29 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-} 
+    <script>
+        // Auto-resize textarea as user types
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    </script>
+}
+
+<style>
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+    }
+    .card {
+        border: none;
+    }
+    .card-header {
+        border-bottom: 1px solid rgba(0,0,0,.125);
+    }
+    textarea {
+        resize: none;
+        min-height: 200px;
+    }
+</style> 

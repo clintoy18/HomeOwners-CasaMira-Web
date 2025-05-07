@@ -6,142 +6,199 @@
 
 <div class="container mt-4">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-8 mx-auto">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-action="Index">Forum</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Back to Forum</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Post</li>
                 </ol>
             </nav>
 
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center @(Model.IsPinned ? "bg-primary text-white" : "")">
-                    <div>
-                        @if (Model.IsPinned)
-                        {
-                            <i class="bi bi-pin-angle-fill me-2"></i>
-                        }
-                        @if (Model.IsLocked)
-                        {
-                            <i class="bi bi-lock-fill me-2"></i>
-                        }
-                        <h1 class="h3 mb-0">@Model.Title</h1>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <form asp-action="PinPost" asp-route-id="@Model.Id" method="post" class="me-2">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm @(Model.IsPinned ? "btn-light" : "btn-outline-primary")" title="@(Model.IsPinned ? "Unpin" : "Pin") this post">
-                                    <i class="bi bi-pin-angle@(Model.IsPinned ? "-fill" : "")"></i>
+            <!-- Main Post -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body p-0">
+                    <!-- Post Header -->
+                    <div class="p-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-circle fs-4 me-2"></i>
+                                <div>
+                                    <div class="fw-bold">@Model.User.FullName</div>
+                                    <small class="text-muted">@Model.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")</small>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-dark" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
                                 </button>
-                            </form>
-                            <form asp-action="LockPost" asp-route-id="@Model.Id" method="post" class="me-2">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm @(Model.IsLocked ? "btn-secondary" : "btn-outline-secondary")" title="@(Model.IsLocked ? "Unlock" : "Lock") this post">
-                                    <i class="bi bi-lock@(Model.IsLocked ? "-fill" : "")"></i>
-                                </button>
-                            </form>
-                        }
-                        @if (User.IsInRole("Admin") || Model.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
-                        {
-                            <form asp-action="DeletePost" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this post?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        }
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-person-circle fs-4 me-2"></i>
-                            <div>
-                                <div class="fw-bold">@Model.User.FullName</div>
-                                <small class="text-muted">Posted on @Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</small>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li>
+                                            <form asp-action="PinPost" asp-route-id="@Model.Id" method="post" class="dropdown-item">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-link text-dark p-0">
+                                                    <i class="bi bi-pin-angle@(Model.IsPinned ? "-fill" : "")"></i> @(Model.IsPinned ? "Unpin" : "Pin") Post
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form asp-action="LockPost" asp-route-id="@Model.Id" method="post" class="dropdown-item">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-link text-dark p-0">
+                                                    <i class="bi bi-lock@(Model.IsLocked ? "-fill" : "")"></i> @(Model.IsLocked ? "Unlock" : "Lock") Post
+                                                </button>
+                                            </form>
+                                        </li>
+                                    }
+                                    @if (User.IsInRole("Admin") || Model.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                                    {
+                                        <li>
+                                            <form asp-action="DeletePost" asp-route-id="@Model.Id" method="post" class="dropdown-item" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-link text-danger p-0">
+                                                    <i class="bi bi-trash"></i> Delete Post
+                                                </button>
+                                            </form>
+                                        </li>
+                                    }
+                                </ul>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Post Content -->
+                    <div class="p-3">
+                        <h5 class="mb-3">@Model.Title</h5>
+                        <p class="mb-3">@Model.Content</p>
                         @if (Model.UpdatedAt.HasValue)
                         {
                             <small class="text-muted">
-                                Last updated: @Model.UpdatedAt.Value.ToString("MMM dd, yyyy HH:mm")
+                                <i class="bi bi-pencil"></i> Edited @Model.UpdatedAt.Value.ToString("MMM dd, yyyy 'at' h:mm tt")
                             </small>
                         }
                     </div>
-                    <div class="post-content mb-4">
-                        @Model.Content
+
+                    <!-- Post Stats -->
+                    <div class="px-3 py-2 border-top border-bottom bg-light">
+                        <div class="d-flex justify-content-between text-muted">
+                            <span><i class="bi bi-chat-dots"></i> @Model.Comments.Count() Comments</span>
+                            @if (Model.IsPinned)
+                            {
+                                <span><i class="bi bi-pin-angle-fill"></i> Pinned</span>
+                            }
+                            @if (Model.IsLocked)
+                            {
+                                <span><i class="bi bi-lock-fill"></i> Locked</span>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Comments Section -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">Comments (@Model.Comments.Count())</h2>
-                </div>
-                <div class="card-body">
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <!-- Comment Form -->
                     @if (!Model.IsLocked)
                     {
-                        <form asp-action="AddComment" method="post" class="mb-4">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="postId" value="@Model.Id" />
-                            <div class="mb-3">
-                                <textarea name="content" class="form-control" rows="3" placeholder="Write your comment..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-send"></i> Post Comment
-                            </button>
-                        </form>
+                        <div class="p-3 border-bottom">
+                            <form asp-action="AddComment" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="postId" value="@Model.Id" />
+                                <div class="d-flex">
+                                    <i class="bi bi-person-circle fs-4 me-2"></i>
+                                    <div class="flex-grow-1">
+                                        <textarea name="content" class="form-control" rows="2" placeholder="Write a comment..." required></textarea>
+                                        <div class="text-end mt-2">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-send"></i> Comment
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     }
                     else
                     {
-                        <div class="alert alert-warning mb-4">
-                            <i class="bi bi-lock-fill"></i> This post is locked. New comments are not allowed.
+                        <div class="p-3 border-bottom">
+                            <div class="alert alert-warning mb-0">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-lock-fill fs-4 me-3"></i>
+                                    <div>
+                                        <h4 class="alert-heading">Post Locked</h4>
+                                        <p class="mb-0">This post is locked. New comments are not allowed.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     }
 
-                    @if (!Model.Comments.Any())
-                    {
-                        <div class="text-center text-muted py-4">
-                            <i class="bi bi-chat-dots display-4"></i>
-                            <p class="mt-2">No comments yet. Be the first to comment!</p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="comments-list">
-                            @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
-                            {
-                                <div class="comment mb-3 pb-3 border-bottom">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div class="d-flex align-items-center">
-                                            <i class="bi bi-person-circle me-2"></i>
-                                            <div>
-                                                <div class="fw-bold">@comment.User.FullName</div>
-                                                <small class="text-muted">@comment.CreatedAt.ToString("MMM dd, yyyy HH:mm")</small>
+                    <!-- Comments List -->
+                    <div class="p-3">
+                        @if (!Model.Comments.Any())
+                        {
+                            <div class="text-center text-muted py-4">
+                                <i class="bi bi-chat-dots display-4"></i>
+                                <p class="mt-3 fs-5">No comments yet. Be the first to comment!</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="comments-list">
+                                @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                                {
+                                    <div class="d-flex mb-3">
+                                        <i class="bi bi-person-circle fs-4 me-2"></i>
+                                        <div class="bg-light rounded-3 p-2 flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <div class="fw-bold">@comment.User.FullName</div>
+                                                    <div>@comment.Content</div>
+                                                    <small class="text-muted">@comment.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")</small>
+                                                </div>
+                                                @if (User.IsInRole("Admin") || comment.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                                                {
+                                                    <form asp-action="DeleteComment" asp-route-id="@comment.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-link text-danger p-0">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                }
                                             </div>
                                         </div>
-                                        @if (User.IsInRole("Admin") || comment.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
-                                        {
-                                            <form asp-action="DeleteComment" asp-route-id="@comment.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this comment?');">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        }
                                     </div>
-                                    <div class="comment-content">
-                                        @comment.Content
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
+                                }
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 8px;
+    }
+    .dropdown-item {
+        padding: 0.5rem 1rem;
+    }
+    .dropdown-item button {
+        width: 100%;
+        text-align: left;
+    }
+    .btn-link {
+        text-decoration: none;
+    }
+    .btn-link:hover {
+        text-decoration: underline;
+    }
+    textarea {
+        resize: none;
+    }
+</style> 
