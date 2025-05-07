@@ -45,6 +45,74 @@
         <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
     }
 
+    <!-- Analytics Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Total Users</h6>
+                    <p class="fs-3 fw-bold text-primary">@ViewBag.TotalUsers</p>
+                    <small class="text-muted">+@ViewBag.NewUsersThisMonth new this month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Posts</h6>
+                    <p class="fs-3 fw-bold text-success">@ViewBag.TotalPosts</p>
+                    <small class="text-muted">+@ViewBag.PostsThisMonth this month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Documents</h6>
+                    <p class="fs-3 fw-bold text-info">@ViewBag.TotalDocuments</p>
+                    <small class="text-muted">+@ViewBag.DocumentsThisMonth this month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Reservations</h6>
+                    <p class="fs-3 fw-bold text-warning">@ViewBag.TotalReservations</p>
+                    <small class="text-muted">+@ViewBag.ReservationsThisMonth this month</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Charts -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="mb-3">User Growth</h6>
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="mb-3">Post Activity</h6>
+                    <canvas id="postActivityChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="mb-3">Reservation Trends</h6>
+                    <canvas id="reservationTrendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <!-- Post Announcement -->
         <div class="col-lg-6 mb-4">
@@ -215,5 +283,58 @@
                 }
             }
         });
+    });
+
+    // Example: Controller should provide these ViewBag variables as arrays/objects
+    // ViewBag.UserGrowthData = new { labels = ["Jan", "Feb", ...], data = [10, 20, ...] }
+    // ViewBag.PostActivityData = new { labels = ["Jan", "Feb", ...], data = [5, 8, ...] }
+    // ViewBag.ReservationTrendsData = new { labels = ["Jan", "Feb", ...], data = [2, 6, ...] }
+
+    const userGrowthData = @Html.Raw(Json.Serialize(ViewBag.UserGrowthData ?? new { labels = new string[0], data = new int[0] }));
+    const postActivityData = @Html.Raw(Json.Serialize(ViewBag.PostActivityData ?? new { labels = new string[0], data = new int[0] }));
+    const reservationTrendsData = @Html.Raw(Json.Serialize(ViewBag.ReservationTrendsData ?? new { labels = new string[0], data = new int[0] }));
+
+    // User Growth Chart
+    new Chart(document.getElementById('userGrowthChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: userGrowthData.labels,
+            datasets: [{
+                label: 'Users',
+                data: userGrowthData.data,
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0,123,255,0.1)',
+                fill: true
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    // Post Activity Chart
+    new Chart(document.getElementById('postActivityChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: postActivityData.labels,
+            datasets: [{
+                label: 'Posts',
+                data: postActivityData.data,
+                backgroundColor: '#28a745'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    // Reservation Trends Chart
+    new Chart(document.getElementById('reservationTrendsChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: reservationTrendsData.labels,
+            datasets: [{
+                label: 'Reservations',
+                data: reservationTrendsData.data,
+                backgroundColor: '#ffc107'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
     });
 </script>
