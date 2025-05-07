@@ -13,7 +13,8 @@ A **C# ASP.NET Core** web application powered by **Entity Framework Core** desig
 
 ### Announcements and Notifications
 - Post subdivision news, urgent alerts, and community events  
-- Automated email and/or SMS notifications *(not yet implemented)*  
+- Automated email and/or SMS notifications 
+
 
 ### Billing and Payment Portal *(Optional)*
 - View and track association dues and other billing statements  
@@ -24,15 +25,15 @@ A **C# ASP.NET Core** web application powered by **Entity Framework Core** desig
 - Calendar view of availability and approved bookings  
 
 ### Service Request Management
-- Submit, track, and update maintenance or security-related service requests *(not yet implemented)*  
+- Submit, track, and update maintenance or security-related service requests 
 - Staff view for request management and status updates  
 
 ### Document Management
-- Downloadable forms, HOA guidelines, financial reports, and meeting minutes *(not yet implemented)*  
+- Downloadable forms, HOA guidelines, financial reports, and meeting minutes 
 - Organized by categories for easy access  
 
 ### Community Forum
-- Discussion boards for homeowners to collaborate, share ideas, and raise issues *(not yet implemented)*  
+- Discussion boards for homeowners to collaborate, share ideas, and raise issues 
 - Moderation tools for admins to manage posts  
 
 ### Emergency Contacts Directory
@@ -51,7 +52,8 @@ A **C# ASP.NET Core** web application powered by **Entity Framework Core** desig
 - Fully responsive layout accessible across desktops, tablets, and smartphones  
 
 ### Reports and Analytics
-- Dashboards and reports for service requests, billing data, and community activity  
+- Dashboards and reports for service requests, billing data, and community activity
+- **NEW:** Visual analytics dashboard for user growth, forum activity, and facility reservations (with interactive charts)
 
 ### Polls and Surveys
 - Create and publish polls/surveys for community engagement *(not yet implemented)*  
