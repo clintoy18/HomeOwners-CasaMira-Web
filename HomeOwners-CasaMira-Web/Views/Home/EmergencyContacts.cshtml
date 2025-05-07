@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Emergency Contacts";
+    Layout = "_UserLayout";
+    var contacts = ViewBag.EmergencyContacts as List<HomeOwners_CasaMira_Web.Models.EmergencyContact>;
+}
+
+<div class="container-fluid mt-4 px-2 px-md-4">
+    <h2 class="mb-4 text-center">Emergency Contacts Directory</h2>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Phone Number</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var contact in contacts)
+                                {
+                                    <tr>
+                                        <td>@contact.Name</td>
+                                        <td>@contact.Type</td>
+                                        <td><a href="tel:@contact.PhoneNumber">@contact.PhoneNumber</a></td>
+                                        <td>@contact.Description</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

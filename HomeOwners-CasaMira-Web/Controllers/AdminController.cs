@@ -203,7 +203,5 @@ namespace HomeOwners_CasaMira_Web.Controllers
 
                 return RedirectToAction("Dashboard"); // Redirect to the Admin Dashboard or appropriate view
             }
-
-
     }
 }

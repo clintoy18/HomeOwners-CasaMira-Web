@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace HomeOwners_CasaMira_Web.Controllers
 {
@@ -60,6 +61,20 @@ namespace HomeOwners_CasaMira_Web.Controllers
         {
             var documents = _context.Documents.ToList(); // Fetch documents from the context
             ViewBag.Documents = documents;  // Pass the documents to the view
+            return View();
+        }
+
+        public static List<EmergencyContact> StaticEmergencyContacts = new List<EmergencyContact>
+        {
+            new EmergencyContact { Id = 1, Name = "Police Station", Type = "Police", PhoneNumber = "911", Description = "Local police emergency hotline" },
+            new EmergencyContact { Id = 2, Name = "Fire Department", Type = "Fire", PhoneNumber = "922", Description = "Local fire department emergency hotline" },
+            new EmergencyContact { Id = 3, Name = "Medical Emergency", Type = "Medical", PhoneNumber = "933", Description = "Nearest hospital emergency room" },
+            new EmergencyContact { Id = 4, Name = "Subdivision Security", Type = "Security", PhoneNumber = "900-123-4567", Description = "On-site subdivision security office" }
+        };
+
+        public IActionResult EmergencyContacts()
+        {
+            ViewBag.EmergencyContacts = StaticEmergencyContacts;
             return View();
         }
 
