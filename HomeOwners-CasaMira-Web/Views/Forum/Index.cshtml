@@ -4,157 +4,45 @@
     Layout = "_UserLayout";
 }
 
-<div class="container mt-4 ">
-    <div class="row">
-        <div class="col-md-12  mx-auto">
-            <!-- Create Post Card -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-person-circle fs-4 me-2"></i>
-                        <div class="fw-bold">@User.Identity.Name</div>
-                    </div>
-                    <a asp-action="Create" class="btn btn-light w-100 text-start p-3 border rounded-3">
-                        <i class="bi bi-pencil-square me-2"></i> What's on your mind?
-                    </a>
-                </div>
-            </div>
-
-            @if (!Model.Any())
-            {
-                <div class="text-center py-5">
-                    <i class="bi bi-chat-square-text display-1 text-muted"></i>
-                    <p class="mt-3 fs-5 text-muted">No posts yet. Be the first to start a discussion!</p>
-                </div>
-            }
-            else
-            {
-                @foreach (var post in Model)
-                {
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-body p-0">
-                            <!-- Post Header -->
-                            <div class="p-3 border-bottom">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-person-circle fs-4 me-2"></i>
-                                        <div>
-                                            <div class="fw-bold">@post.User.FullName</div>
-                                            <small class="text-muted">@post.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")</small>
-                                        </div>
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn btn-link text-dark" type="button" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            @if (User.IsInRole("Admin"))
-                                            {
-                                                <li>
-                                                    <form asp-action="PinPost" asp-route-id="@post.Id" method="post" class="dropdown-item">
-                                                        @Html.AntiForgeryToken()
-                                                        <button type="submit" class="btn btn-link text-dark p-0">
-                                                            <i class="bi bi-pin-angle@(post.IsPinned ? "-fill" : "")"></i> @(post.IsPinned ? "Unpin" : "Pin") Post
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                                <li>
-                                                    <form asp-action="LockPost" asp-route-id="@post.Id" method="post" class="dropdown-item">
-                                                        @Html.AntiForgeryToken()
-                                                        <button type="submit" class="btn btn-link text-dark p-0">
-                                                            <i class="bi bi-lock@(post.IsLocked ? "-fill" : "")"></i> @(post.IsLocked ? "Unlock" : "Lock") Post
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            }
-                                            @if (User.IsInRole("Admin") || post.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
-                                            {
-                                                <li>
-                                                    <form asp-action="DeletePost" asp-route-id="@post.Id" method="post" class="dropdown-item" onsubmit="return confirm('Are you sure you want to delete this post?');">
-                                                        @Html.AntiForgeryToken()
-                                                        <button type="submit" class="btn btn-link text-danger p-0">
-                                                            <i class="bi bi-trash"></i> Delete Post
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Post Content -->
-                            <div class="p-3">
-                                <h5 class="mb-3">@post.Title</h5>
-                                <p class="mb-3">@post.Content</p>
-                                @if (post.UpdatedAt.HasValue)
-                                {
-                                    <small class="text-muted">
-                                        <i class="bi bi-pencil"></i> Edited @post.UpdatedAt.Value.ToString("MMM dd, yyyy 'at' h:mm tt")
-                                    </small>
-                                }
-                            </div>
-
-                            <!-- Post Stats -->
-                            <div class="px-3 py-2 border-top border-bottom bg-light">
-                                <div class="d-flex justify-content-between text-muted">
-                                    <span><i class="bi bi-chat-dots"></i> @post.Comments.Count() Comments</span>
-                                    @if (post.IsPinned)
-                                    {
-                                        <span><i class="bi bi-pin-angle-fill"></i> Pinned</span>
-                                    }
-                                    @if (post.IsLocked)
-                                    {
-                                        <span><i class="bi bi-lock-fill"></i> Locked</span>
-                                    }
-                                </div>
-                            </div>
-
-                            <!-- Post Actions -->
-                            <div class="p-2">
-                                <div class="d-flex justify-content-around">
-                                    <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-link text-dark text-decoration-none">
-                                        <i class="bi bi-chat-dots"></i> Comment
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Comments Preview -->
-                            @if (post.Comments.Any())
-                            {
-                                <div class="px-3 py-2 border-top bg-light">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-chat-dots"></i>
-                                        <span class="ms-2">@post.Comments.Count() Comments</span>
-                                    </div>
-                                    @foreach (var comment in post.Comments.OrderByDescending(c => c.CreatedAt).Take(2))
-                                    {
-                                        <div class="d-flex mb-2">
-                                            <i class="bi bi-person-circle fs-5 me-2"></i>
-                                            <div class="bg-white rounded-3 p-2 flex-grow-1">
-                                                <div class="fw-bold">@comment.User.FullName</div>
-                                                <div>@comment.Content</div>
-                                                <small class="text-muted">@comment.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")</small>
-                                            </div>
-                                        </div>
-                                    }
-                                    @if (post.Comments.Count() > 2)
-                                    {
-                                        <a asp-action="Details" asp-route-id="@post.Id" class="text-decoration-none">
-                                            View all @post.Comments.Count() comments
-                                        </a>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
-            }
-        </div>
-    </div>
-</div>
-
 <style>
+    :root {
+        --sidebar-brown: #a98c6c;
+        --sidebar-brown-dark: #8a6f4d;
+        --sidebar-brown-light: #cbb89d;
+        --sidebar-brown-bg: #f8f6f3;
+    }
+    
+    .forum-header {
+        color: var(--sidebar-brown-dark);
+        font-weight: 700;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    .forum-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        padding: 2rem 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--sidebar-brown-light);
+    }
+    .btn-brown, .btn-outline-brown {
+        color: #fff;
+        background-color: var(--sidebar-brown);
+        border-color: var(--sidebar-brown-dark);
+    }
+    .btn-brown:hover, .btn-outline-brown:hover {
+        background-color: var(--sidebar-brown-dark);
+        border-color: var(--sidebar-brown-dark);
+        color: #fff;
+    }
+    .btn-outline-brown {
+        background: #fff;
+        color: var(--sidebar-brown-dark);
+    }
+    .text-brown {
+        color: var(--sidebar-brown-dark) !important;
+    }
     .card {
         border: none;
         border-radius: 8px;
@@ -172,4 +60,160 @@
     .btn-link:hover {
         text-decoration: underline;
     }
-</style> 
+</style>
+
+
+    <div class="forum-card">
+        <div class="container mt-2 ">
+        
+    <h2 class="forum-header"><i class="bi bi-chat-dots"></i> Community Forum</h2>
+            <div class="row">
+                <div class="col-md-12  mx-auto">
+                    <!-- Create Post Card -->
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-person-circle fs-4 me-2"></i>
+                                <div class="fw-bold">@User.Identity.Name</div>
+                            </div>
+                            <a asp-action="Create" class="btn btn-light w-100 text-start p-3 border rounded-3">
+                                <i class="bi bi-pencil-square me-2"></i> What's on your mind?
+                            </a>
+                        </div>
+                    </div>
+
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-chat-square-text display-1 text-muted"></i>
+                            <p class="mt-3 fs-5 text-muted">No posts yet. Be the first to start a discussion!</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var post in Model)
+                        {
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body p-0">
+                                    <!-- Post Header -->
+                                    <div class="p-3 border-bottom">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-person-circle fs-4 me-2"></i>
+                                                <div>
+                                                    <div class="fw-bold">@post.User.FullName</div>
+                                                    <small class="text-muted">@post.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")</small>
+                                                </div>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-link text-dark" type="button" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    @if (User.IsInRole("Admin"))
+                                                    {
+                                                        <li>
+                                                            <form asp-action="PinPost" asp-route-id="@post.Id" method="post" class="dropdown-item">
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-link text-dark p-0">
+                                                                    <i class="bi bi-pin-angle@(post.IsPinned ? "-fill" : "")"></i> @(post.IsPinned ? "Unpin" : "Pin") Post
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <form asp-action="LockPost" asp-route-id="@post.Id" method="post" class="dropdown-item">
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-link text-dark p-0">
+                                                                    <i class="bi bi-lock@(post.IsLocked ? "-fill" : "")"></i> @(post.IsLocked ? "Unlock" : "Lock") Post
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    }
+                                                    @if (User.IsInRole("Admin") || post.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                                                    {
+                                                        <li>
+                                                            <form asp-action="DeletePost" asp-route-id="@post.Id" method="post" class="dropdown-item" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-link text-danger p-0">
+                                                                    <i class="bi bi-trash"></i> Delete Post
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Post Content -->
+                                    <div class="p-3">
+                                        <h5 class="mb-3">@post.Title</h5>
+                                        <p class="mb-3">@post.Content</p>
+                                        @if (post.UpdatedAt.HasValue)
+                                        {
+                                            <small class="text-muted">
+                                                <i class="bi bi-pencil"></i> Edited @post.UpdatedAt.Value.ToString("MMM dd, yyyy 'at' h:mm tt")
+                                            </small>
+                                        }
+                                    </div>
+
+                                    <!-- Post Stats -->
+                                    <div class="px-3 py-2 border-top border-bottom bg-light">
+                                        <div class="d-flex justify-content-between text-muted">
+                                            <span><i class="bi bi-chat-dots"></i> @post.Comments.Count() Comments</span>
+                                            @if (post.IsPinned)
+                                            {
+                                                <span><i class="bi bi-pin-angle-fill"></i> Pinned</span>
+                                            }
+                                            @if (post.IsLocked)
+                                            {
+                                                <span><i class="bi bi-lock-fill"></i> Locked</span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Post Actions -->
+                                    <div class="p-2">
+                                        <div class="d-flex justify-content-around">
+                                            <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-link text-dark text-decoration-none">
+                                                <i class="bi bi-chat-dots"></i> Comment
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Comments Preview -->
+                                    @if (post.Comments.Any())
+                                    {
+                                        <div class="px-3 py-2 border-top bg-light">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="bi bi-chat-dots"></i>
+                                                <span class="ms-2">@post.Comments.Count() Comments</span>
+                                            </div>
+                                            @foreach (var comment in post.Comments.OrderByDescending(c => c.CreatedAt).Take(2))
+                                            {
+                                                <div class="d-flex mb-2">
+                                                    <i class="bi bi-person-circle fs-5 me-2"></i>
+                                                    <div class="bg-white rounded-3 p-2 flex-grow-1">
+                                                        <div class="fw-bold">@comment.User.FullName</div>
+                                                        <div>@comment.Content</div>
+                                                        <small class="text-muted">@comment.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")</small>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (post.Comments.Count() > 2)
+                                            {
+                                                <a asp-action="Details" asp-route-id="@post.Id" class="text-decoration-none">
+                                                    View all @post.Comments.Count() comments
+                                                </a>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+   
+</div> 

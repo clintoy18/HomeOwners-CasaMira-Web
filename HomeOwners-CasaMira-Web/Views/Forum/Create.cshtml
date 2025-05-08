@@ -5,47 +5,50 @@
     Layout = "_UserLayout";
 }
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Back to Forum</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Create New Post</li>
-                </ol>
-            </nav>
+<div class="forum-wrapper">
+    <h2 class="forum-header"><i class="bi bi-chat-dots"></i> Community Forum</h2>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Back to Forum</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Create New Post</li>
+                    </ol>
+                </nav>
 
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
-                    <h2 class="h4 mb-0">Create New Post</h2>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Create">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-                        
-                        <div class="form-group mb-4">
-                            <label asp-for="Title" class="form-label fw-bold"></label>
-                            <input asp-for="Title" class="form-control form-control-lg" placeholder="Enter a clear and descriptive title" />
-                            <span asp-validation-for="Title" class="text-danger"></span>
-                            <small class="form-text text-muted">Keep your title concise but informative (max 200 characters)</small>
-                        </div>
-                        
-                        <div class="form-group mb-4">
-                            <label asp-for="Content" class="form-label fw-bold"></label>
-                            <textarea asp-for="Content" class="form-control" rows="8" placeholder="Write your post content here..."></textarea>
-                            <span asp-validation-for="Content" class="text-danger"></span>
-                            <small class="form-text text-muted">Be clear and respectful in your communication</small>
-                        </div>
-                        
-                        <div class="form-group d-flex gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-send"></i> Create Post
-                            </button>
-                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
-                                <i class="bi bi-x-circle"></i> Cancel
-                            </a>
-                        </div>
-                    </form>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h2 class="h4 mb-0">Create New Post</h2>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="Create">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                            
+                            <div class="form-group mb-4">
+                                <label asp-for="Title" class="form-label fw-bold"></label>
+                                <input asp-for="Title" class="form-control form-control-lg" placeholder="Enter a clear and descriptive title" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                                <small class="form-text text-muted">Keep your title concise but informative (max 200 characters)</small>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label asp-for="Content" class="form-label fw-bold"></label>
+                                <textarea asp-for="Content" class="form-control" rows="8" placeholder="Write your post content here..."></textarea>
+                                <span asp-validation-for="Content" class="text-danger"></span>
+                                <small class="form-text text-muted">Be clear and respectful in your communication</small>
+                            </div>
+                            
+                            <div class="form-group d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-send"></i> Create Post
+                                </button>
+                                <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,6 +68,50 @@
 }
 
 <style>
+    :root {
+        --sidebar-brown: #a98c6c;
+        --sidebar-brown-dark: #8a6f4d;
+        --sidebar-brown-light: #cbb89d;
+        --sidebar-brown-bg: #f8f6f3;
+    }
+    .forum-wrapper {
+        background: var(--sidebar-brown-bg);
+        border-radius: 8px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+        padding: 2.5rem 2rem;
+        margin: 2rem 0;
+    }
+    .forum-header {
+        color: var(--sidebar-brown-dark);
+        font-weight: 700;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    .forum-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 1px rgba(0,0,0,0.06);
+        padding: 2rem 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--sidebar-brown-light);
+    }
+    .btn-brown, .btn-outline-brown {
+        color: #fff;
+        background-color: var(--sidebar-brown);
+        border-color: var(--sidebar-brown-dark);
+    }
+    .btn-brown:hover, .btn-outline-brown:hover {
+        background-color: var(--sidebar-brown-dark);
+        border-color: var(--sidebar-brown-dark);
+        color: #fff;
+    }
+    .btn-outline-brown {
+        background: #fff;
+        color: var(--sidebar-brown-dark);
+    }
+    .text-brown {
+        color: var(--sidebar-brown-dark) !important;
+    }
     .breadcrumb {
         background: transparent;
         padding: 0;
