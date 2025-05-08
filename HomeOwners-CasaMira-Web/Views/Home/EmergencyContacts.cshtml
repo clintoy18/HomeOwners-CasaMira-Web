@@ -4,37 +4,241 @@
     var contacts = ViewBag.EmergencyContacts as List<HomeOwners_CasaMira_Web.Models.EmergencyContact>;
 }
 
+<style>
+    :root {
+        --sidebar-brown: #a98c6c;
+        --sidebar-brown-dark: #8a6f4d;
+        --sidebar-brown-light: #cbb89d;
+        --sidebar-brown-bg: #f5eee6;
+    }
+    .emergency-wrapper {
+        background: linear-gradient(135deg, var(--sidebar-brown-bg) 0%, var(--sidebar-brown-light) 100%);
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+    .emergency-header {
+        background: linear-gradient(135deg, var(--sidebar-brown) 0%, var(--sidebar-brown-dark) 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+    .emergency-header h2 {
+        margin: 0;
+        font-weight: 600;
+    }
+    .emergency-header p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+    }
+    .contact-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease;
+    }
+    .contact-card:hover {
+        transform: translateY(-2px);
+    }
+    .search-wrapper {
+        background: white;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .btn-brown, .btn-outline-brown {
+        color: #fff;
+        background-color: var(--sidebar-brown);
+        border-color: var(--sidebar-brown-dark);
+    }
+    .btn-brown:hover, .btn-outline-brown:hover {
+        background-color: var(--sidebar-brown-dark);
+        border-color: var(--sidebar-brown-dark);
+        color: #fff;
+    }
+    .btn-outline-brown {
+        background: #fff;
+        color: var(--sidebar-brown-dark);
+    }
+    .badge-brown {
+        background: var(--sidebar-brown-dark);
+        color: #fff;
+    }
+    .text-brown {
+        color: var(--sidebar-brown-dark) !important;
+    }
+    .icon-brown {
+        color: var(--sidebar-brown-dark) !important;
+    }
+</style>
+
 <div class="container-fluid mt-4 px-2 px-md-4">
-    <h2 class="mb-4 text-center">Emergency Contacts Directory</h2>
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-10 col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Phone Number</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var contact in contacts)
-                                {
+    <div class="emergency-wrapper">
+        <div class="emergency-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2><i class="fas fa-exclamation-triangle me-2 icon-brown"></i>Emergency Contacts</h2>
+                    <p>Important contact information for emergency situations</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="search-wrapper">
+                        <div class="input-group">
+                            <input type="text" id="searchInput" class="form-control border-0" placeholder="Search contacts...">
+                            <button class="btn btn-outline-brown" type="button" id="searchButton">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="contact-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="mb-0 text-brown">
+                                <i class="fas fa-phone-alt me-2 icon-brown"></i>Contact Directory
+                            </h4>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-brown btn-sm" id="sortByName">
+                                    <i class="fas fa-sort-alpha-down"></i> Sort by Name
+                                </button>
+                                <button type="button" class="btn btn-outline-brown btn-sm" id="sortByType">
+                                    <i class="fas fa-tags"></i> Sort by Type
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="contactsTable">
+                                <thead class="table-light">
                                     <tr>
-                                        <td>@contact.Name</td>
-                                        <td>@contact.Type</td>
-                                        <td><a href="tel:@contact.PhoneNumber">@contact.PhoneNumber</a></td>
-                                        <td>@contact.Description</td>
+                                        <th scope="col" class="sortable" data-sort="name">
+                                            <i class="fas fa-user me-1 icon-brown"></i> Name
+                                        </th>
+                                        <th scope="col" class="sortable" data-sort="type">
+                                            <i class="fas fa-tag me-1 icon-brown"></i> Type
+                                        </th>
+                                        <th scope="col">
+                                            <i class="fas fa-phone me-1 icon-brown"></i> Phone Number
+                                        </th>
+                                        <th scope="col">
+                                            <i class="fas fa-info-circle me-1 icon-brown"></i> Description
+                                        </th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var contact in contacts)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-user-circle me-2 icon-brown"></i>
+                                                    @contact.Name
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-brown">
+                                                    <i class="fas fa-tag me-1"></i>
+                                                    @contact.Type
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="tel:@contact.PhoneNumber" class="btn btn-sm btn-outline-brown" 
+                                                   data-bs-toggle="tooltip" title="Click to call">
+                                                    <i class="fas fa-phone-alt me-1"></i>
+                                                    @contact.PhoneNumber
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span class="text-muted">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    @contact.Description
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (!contacts.Any())
+                        {
+                            <div class="text-center py-5">
+                                <i class="fas fa-address-book fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No emergency contacts available.</p>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+            // Search functionality
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#contactsTable tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            // Sorting functionality
+            $(".sortable").click(function() {
+                var table = $(this).parents('table').eq(0);
+                var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()));
+                this.asc = !this.asc;
+                if (!this.asc) {
+                    rows = rows.reverse();
+                }
+                for (var i = 0; i < rows.length; i++) {
+                    table.append(rows[i]);
+                }
+            });
+            function comparer(index) {
+                return function(a, b) {
+                    var valA = getCellValue(a, index), valB = getCellValue(b, index);
+                    return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB);
+                }
+            }
+            function getCellValue(row, index) {
+                return $(row).children('td').eq(index).text();
+            }
+            // Sort by name button
+            $("#sortByName").click(function() {
+                var table = $("#contactsTable");
+                var rows = table.find('tr:gt(0)').toArray().sort(function(a, b) {
+                    var nameA = $(a).find('td:eq(0)').text().toLowerCase();
+                    var nameB = $(b).find('td:eq(0)').text().toLowerCase();
+                    return nameA.localeCompare(nameB);
+                });
+                table.find('tr:gt(0)').remove();
+                for (var i = 0; i < rows.length; i++) {
+                    table.append(rows[i]);
+                }
+            });
+            // Sort by type button
+            $("#sortByType").click(function() {
+                var table = $("#contactsTable");
+                var rows = table.find('tr:gt(0)').toArray().sort(function(a, b) {
+                    var typeA = $(a).find('td:eq(1)').text().toLowerCase();
+                    var typeB = $(b).find('td:eq(1)').text().toLowerCase();
+                    return typeA.localeCompare(typeB);
+                });
+                table.find('tr:gt(0)').remove();
+                for (var i = 0; i < rows.length; i++) {
+                    table.append(rows[i]);
+                }
+            });
+        });
+    </script>
+} 
