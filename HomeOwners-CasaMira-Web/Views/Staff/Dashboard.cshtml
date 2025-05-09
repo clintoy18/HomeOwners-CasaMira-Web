@@ -4,21 +4,183 @@
 }
 
 <div class="container mt-4">
-    <h2 class="text-center mb-4 text-white"> Admin Dashboard</h2>
+    <h2 class="text-center mb-4 text-white">Staff Dashboard</h2>
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     }
 
-   
-        <div class="col-md-6">
-            <div class="card shadow-sm p-4">
-                <h4 class="mb-3">This is Staff!</h4>
+    <!-- Quick Stats Row -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Pending Requests</h6>
+                            <h2 class="mt-2 mb-0">@ViewBag.PendingRequests</h2>
+                        </div>
+                        <i class="bi bi-clock-history fs-1"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a asp-action="ServiceRequests" class="text-white text-decoration-none">
+                        View Details <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Completed Requests</h6>
+                            <h2 class="mt-2 mb-0">@ViewBag.CompletedRequests</h2>
+                        </div>
+                        <i class="bi bi-check-circle fs-1"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a asp-action="ServiceRequests" class="text-white text-decoration-none">
+                        View Details <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Facility Reservations</h6>
+                            <h2 class="mt-2 mb-0">@ViewBag.ActiveReservations</h2>
+                        </div>
+                        <i class="bi bi-calendar-check fs-1"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a asp-action="FacilityReservations" class="text-white text-decoration-none">
+                        View Details <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Main Actions Row -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="bi bi-tools text-primary"></i>
+                        Service Requests
+                    </h4>
+                    <p class="card-text">Manage and respond to maintenance and service requests from residents.</p>
+                    <div class="d-flex gap-2">
+                        <a asp-action="ServiceRequests" class="btn btn-primary">
+                            <i class="bi bi-list"></i> View All Requests
+                        </a>
+                        <a asp-action="ServiceRequests" class="btn btn-outline-primary">
+                            <i class="bi bi-funnel"></i> Filter Requests
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
-       
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="bi bi-calendar-check text-success"></i>
+                        Facility Reservations
+                    </h4>
+                    <p class="card-text">Review and manage facility reservation requests from residents.</p>
+                    <div class="d-flex gap-2">
+                        <a asp-action="FacilityReservations" class="btn btn-success">
+                            <i class="bi bi-list"></i> View All Reservations
+                        </a>
+                        <a asp-action="FacilityReservations" class="btn btn-outline-success">
+                            <i class="bi bi-funnel"></i> Filter Reservations
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Row -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-activity text-primary"></i>
+                        Recent Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var activity in ViewBag.RecentActivity ?? new List<dynamic>())
+                                {
+                                    <tr>
+                                        <td>
+                                            <i class="bi @(activity.Type == "Service" ? "bi-tools" : "bi-calendar-check")"></i>
+                                            @activity.Type
+                                        </td>
+                                        <td>@activity.Description</td>
+                                        <td>
+                                            <span class="badge @(activity.Status switch {
+                                                "Completed" => "bg-success",
+                                                "In Progress" => "bg-primary",
+                                                "Pending" => "bg-warning",
+                                                "Cancelled" => "bg-danger",
+                                                _ => "bg-info"
+                                            })">
+                                                @activity.Status
+                                            </span>
+                                        </td>
+                                        <td>@activity.Date.ToString("MM/dd/yyyy")</td>
+                                        <td>
+                                            <a href="@activity.ActionUrl" class="btn btn-sm btn-outline-primary">
+                                                View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                $(this).remove();
+            });
+        }, 5000);
+    </script>
+}

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace HomeOwners_CasaMira_Web.Controllers
 {
@@ -19,8 +20,58 @@ namespace HomeOwners_CasaMira_Web.Controllers
             _context = context;
         }
 
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
+            // Get statistics
+            ViewBag.PendingRequests = await _context.ServiceRequests
+                .Where(s => s.Status == "Pending")
+                .CountAsync();
+
+            ViewBag.CompletedRequests = await _context.ServiceRequests
+                .Where(s => s.Status == "Completed")
+                .CountAsync();
+
+            ViewBag.ActiveReservations = await _context.FacilityReservations
+                .Where(f => f.Status == "Approved" && f.ReservationDate >= DateTime.Today)
+                .CountAsync();
+
+            // Get recent activity (last 5 service requests and facility reservations)
+            var recentServiceRequests = await _context.ServiceRequests
+                .Include(s => s.User)
+                .OrderByDescending(s => s.CreatedAt)
+                .Take(5)
+                .Select(s => new
+                {
+                    Type = "Service",
+                    Description = $"{s.RequestType} - {s.User.FullName}",
+                    Status = s.Status,
+                    Date = s.CreatedAt,
+                    ActionUrl = Url.Action("ServiceRequestDetails", new { id = s.Id })
+                })
+                .ToListAsync();
+
+            var recentReservations = await _context.FacilityReservations
+                .Include(f => f.Facility)
+                .Include(f => f.User)
+                .OrderByDescending(f => f.ReservationDate)
+                .Take(5)
+                .Select(f => new
+                {
+                    Type = "Reservation",
+                    Description = $"{f.Facility.Name} - {f.User.FullName}",
+                    Status = f.Status,
+                    Date = f.ReservationDate,
+                    ActionUrl = Url.Action("FacilityReservationDetails", new { id = f.Id })
+                })
+                .ToListAsync();
+
+            // Combine and sort recent activities
+            ViewBag.RecentActivity = recentServiceRequests
+                .Concat(recentReservations)
+                .OrderByDescending(a => a.Date)
+                .Take(5)
+                .ToList();
+
             return View();
         }
 
